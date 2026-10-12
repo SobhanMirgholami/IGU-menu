@@ -208,10 +208,12 @@ export default function ManagerStaff() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [form, setForm] = useState(null) // null | 'new' | member id
+  const [notSetUp, setNotSetUp] = useState(false)
 
   async function load() {
     const { data, error } = await supabase.rpc('manager_staff_list')
-    if (error) setError(error.message)
+    if (error?.code === 'PGRST202') setNotSetUp(true) // database/12_staff_pins.sql not run yet
+    else if (error) setError(error.message)
     else setMembers(data)
     setLoading(false)
   }
@@ -233,6 +235,7 @@ export default function ManagerStaff() {
   }
 
   if (loading) return <p className="text-muted">{t('manager.team.loading')}</p>
+  if (notSetUp) return <p className="text-muted">{t('manager.team.notSetUp')}</p>
 
   return (
     <div className="flex flex-col gap-6">

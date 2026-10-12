@@ -313,7 +313,8 @@
         "PIN_TOO_EASY": "This PIN is too easy to guess. Pick another one.",
         "NAME_TAKEN": "Someone with this name already exists.",
         "pinMatch": "The two PINs don't match."
-      }
+      },
+      "notSetUp": "Staff PINs are not set up yet. Coming soon."
     }
   }
 }

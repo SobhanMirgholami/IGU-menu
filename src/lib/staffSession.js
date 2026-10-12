@@ -42,8 +42,11 @@ export function onTerminalLocked(callback) {
 
 // Calls a staff action and sends the PIN session with it.
 // If the session ran out, the terminal locks and asks for a PIN.
+// Without a PIN session (the manager's own account) nothing extra is sent,
+// so this also works before database/12_staff_pins.sql has been run.
 export async function staffRpc(name, args) {
-  const result = await supabase.rpc(name, { ...args, p_session: getStaffSession() })
+  const session = getStaffSession()
+  const result = await supabase.rpc(name, session ? { ...args, p_session: session } : args)
   if (result.error?.message === 'PIN_REQUIRED') lockTerminal()
   return result
 }

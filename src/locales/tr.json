@@ -313,7 +313,8 @@
         "PIN_TOO_EASY": "Bu PIN tahmin etmek için çok kolay. Başka bir tane seç.",
         "NAME_TAKEN": "Bu isimde biri zaten var.",
         "pinMatch": "İki PIN aynı değil."
-      }
+      },
+      "notSetUp": "Personel PIN sistemi henüz kurulmadı. Yakında."
     }
   }
 }
