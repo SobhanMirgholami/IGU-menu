@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { formatPrice } from '../lib/format'
+import { pick } from '../lib/localize'
+import { exportSalesExcel } from '../lib/exportExcel'
 
 const toDateString = (date) => date.toLocaleDateString('en-CA', { timeZone: 'Europe/Istanbul' })
 
@@ -29,7 +31,9 @@ const inputClass =
   'w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg focus:outline-none focus:border-brand dark:focus:border-pop'
 
 export default function SalesReport() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const lang = i18n.resolvedLanguage
+  const [exporting, setExporting] = useState(false)
   const [from, setFrom] = useState(today())
   const [to, setTo] = useState(today())
   const [hourFrom, setHourFrom] = useState(0)
@@ -65,31 +69,24 @@ export default function SalesReport() {
     loadReport(range)
   }
 
-  function exportCsv() {
-    const r = (key) => t(`manager.report.${key}`)
-    const rows = [
-      [r('report'), `${from} – ${to}, ${pad(hourFrom)}-${pad(hourTo)}`],
-      [r('income'), report.income],
-      [r('orders'), report.orders],
-      [r('average'), report.average],
-      [r('cancelled'), report.cancelled],
-      [],
-      [r('item'), r('qty'), r('income')],
-      ...report.items.map((item) => [item.name, item.quantity, item.income]),
-    ]
-
-    const toCell = (cell) => (typeof cell === 'number' ? String(cell).replace('.', ',') : String(cell ?? ''))
-
-    const csv = rows
-      .map((row) => row.map((cell) => `"${toCell(cell).replaceAll('"', '""')}"`).join(';'))
-      .join('\n')
-
-    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' })
-    const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
-    link.download = `sales-${from}-to-${to}.csv`
-    link.click()
-    URL.revokeObjectURL(link.href)
+  async function exportExcel() {
+    setExporting(true)
+    setError(null)
+    try {
+      await exportSalesExcel(
+        {
+          report,
+          period: `${from} – ${to}, ${pad(hourFrom)}–${pad(hourTo)}`,
+          hourFrom: Number(hourFrom),
+          hourTo: Number(hourTo),
+        },
+        { fileName: `igu-cafe-sales-${from}-to-${to}.xlsx`, openLang: lang }
+      )
+    } catch {
+      setError(t('manager.report.exportError'))
+    } finally {
+      setExporting(false)
+    }
   }
 
   const maxHourOrders = Math.max(1, ...(report?.by_hour ?? []).map((h) => h.orders))
@@ -173,10 +170,11 @@ export default function SalesReport() {
                 </button>
                 {report.items.length > 0 && (
                   <button
-                    onClick={exportCsv}
-                    className="h-10 px-4 rounded-full border-2 border-ink bg-mint text-ink font-bold text-sm"
+                    onClick={exportExcel}
+                    disabled={exporting}
+                    className="h-10 px-4 rounded-full border-2 border-ink bg-mint text-ink font-bold text-sm disabled:opacity-50"
                   >
-                    {t('manager.report.export')}
+                    {exporting ? t('manager.report.exporting') : t('manager.report.export')}
                   </button>
                 )}
               </div>
@@ -196,7 +194,7 @@ export default function SalesReport() {
                 <tbody>
                   {report.items.map((item) => (
                     <tr key={item.name} className="border-t border-soft-line">
-                      <td className="py-2 font-semibold">{item.name}</td>
+                      <td className="py-2 font-semibold">{pick(item.names, lang) || item.name}</td>
                       <td className="py-2 text-end">{item.quantity}</td>
                       <td className="py-2 text-end">{formatPrice(item.income)}</td>
                     </tr>

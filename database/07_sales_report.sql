@@ -1,5 +1,6 @@
 -- 07_sales_report.sql
 -- Manager-only sales report for a date range and hour range (Istanbul time).
+-- Each item includes "name" (Turkish) and "names" (all languages).
 
 create or replace function public.sales_report(
   p_from date,
@@ -60,6 +61,7 @@ begin
       from (
         select
           m.name->>'tr' as name,
+          m.name as names,
           sum(oi.quantity)::int as quantity,
           sum(oi.quantity * oi.unit_price) as income
         from public.order_items oi

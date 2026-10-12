@@ -192,7 +192,9 @@
       "qty": "Adet",
       "busiest": "En yoğun saatler",
       "report": "Rapor",
-      "print": "Raporu yazdır"
+      "print": "Raporu yazdır",
+      "exporting": "Hazırlanıyor...",
+      "exportError": "Excel dosyası oluşturulamadı. Lütfen tekrar deneyin."
     },
     "settings": {
       "title": "Kafe ayarları",
