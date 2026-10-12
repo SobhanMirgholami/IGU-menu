@@ -1,4 +1,5 @@
-<img src="assets/banner1.svg" alt="sobhan" width="100%">
+<img src="assets/banner.svg" alt="sobhan" width="100%">
+
 <div align="center">
 
 # ☕ IGU Café
@@ -38,6 +39,15 @@ So I decided to build a fix: students order from their phones, the café gets or
 - 🔄 One tap to move orders: preparing → ready → picked up
 - 💵 Mark orders as paid at the counter
 - 🧾 Print 80mm thermal receipts in Turkish
+- 🚫 Mark items sold out in one tap
+
+### 📊 For the café manager
+- 🍰 Add menu items in Turkish, English, and Arabic
+- ✏️ Edit prices and categories
+- 🗄️ Archive old items without losing order history
+- 📈 Sales reports by date and hour: income, orders, average order, cancellations
+- 🏆 Best-selling items and busiest hours
+- 📥 Export reports to Excel
 
 ---
 
@@ -46,6 +56,7 @@ So I decided to build a fix: students order from their phones, the café gets or
 I treated security as a core feature, not an afterthought:
 
 - 🛡️ **Row Level Security** on every table: students only ever see their own orders
+- 👥 **Role-based access:** student, staff, and manager each see only what their job needs
 - 💰 **Server-side pricing:** totals are calculated in the database, so nobody can fake a price
 - 🚪 **One door for orders:** a validated database function is the only way to create one
 - 🚫 **Spam protection:** max 2 active orders per student, plus item and note limits
@@ -53,6 +64,7 @@ I treated security as a core feature, not an afterthought:
 - 📜 **Business rules in the database:** no pickup without payment, paid orders can't be cancelled
 - 🕵️ **Full order history:** every change is logged with who, when, and which shift
 - 🧊 **Frozen prices:** each order saves its prices, so menu changes never rewrite history
+- 🗃️ **Nothing is deleted:** menu items are archived, so old orders and reports stay correct
 
 ---
 
@@ -77,22 +89,30 @@ I treated security as a core feature, not an afterthought:
 ```
 src/
 ├── components/
-│   ├── Login.jsx            🔐 Email code sign-in
-│   ├── Menu.jsx             📋 Menu with add buttons
-│   ├── Cart.jsx             🛒 Cart and ordering
-│   ├── MyOrders.jsx         📡 Live order status
-│   ├── StaffDashboard.jsx   👨‍🍳 Staff order screen
-│   └── Receipt.jsx          🧾 Printable receipt
+│   ├── Login.jsx              🔐 Email code sign-in
+│   ├── Menu.jsx               📋 Menu with add buttons
+│   ├── Cart.jsx               🛒 Cart and ordering
+│   ├── MyOrders.jsx           📡 Live order status
+│   ├── StaffDashboard.jsx     👨‍🍳 Staff order screen
+│   ├── Receipt.jsx            🧾 Printable receipt
+│   ├── AvailabilityPanel.jsx  🚫 Staff sold-out toggles
+│   ├── ManagerMenu.jsx        🍰 Manager menu editor
+│   └── SalesReport.jsx        📊 Sales reports
 └── lib/
-    ├── supabase.js          🔌 Supabase client
-    └── format.js            💰 Price formatting
+    ├── supabase.js            🔌 Supabase client
+    └── format.js              💰 Price formatting
 
 database/
-├── 01_menu.sql              Menu tables + sample data
-├── 02_orders.sql            Orders + place_order function
-├── 03_staff.sql             Roles, staff access, realtime
-├── 04_order_events.sql      Order history with shifts
-└── 05_payments.sql          Payment and pickup rules
+├── 01_menu.sql                Menu tables + sample data
+├── 02_orders.sql              Orders + place_order function
+├── 03_staff.sql               Roles, staff access, realtime
+├── 04_order_events.sql        Order history with shifts
+├── 05_payments.sql            Payment and pickup rules
+├── 06_menu_management.sql     Manager editing, archiving, sold out
+└── 07_sales_report.sql        Sales report function
+
+assets/
+└── banner.svg                 🎨 README banner
 ```
 
 </details>
@@ -108,7 +128,7 @@ npm install
 
 **2. Set up Supabase**
 - Create a project at [supabase.com](https://supabase.com)
-- Run the files in `database/` **in order** (01 → 05) in the SQL Editor
+- Run the files in `database/` **in order** (01 → 07) in the SQL Editor
 - Connect an SMTP provider and add `{{ .Token }}` to the **Magic Link** and **Confirm signup** email templates
 
 **3. Add your environment variables**
@@ -125,13 +145,14 @@ VITE_SUPABASE_ANON_KEY=
 npm run dev
 ```
 
-**5. Make someone staff**
+**5. Assign roles**
 
-Sign in once with their email, then run:
+Sign in once with the person's email, then run:
 ```sql
 insert into user_roles (user_id, role)
 select id, 'staff' from auth.users where email = 'staff@example.com';
 ```
+Use `'manager'` instead of `'staff'` for the café manager.
 
 ---
 
@@ -144,20 +165,20 @@ select id, 'staff' from auth.users where email = 'staff@example.com';
 - [x] Live order status for students
 - [x] Payments and receipt printing
 - [x] Order history with shifts
+- [x] Manager menu editor: add items, edit prices, archive
+- [x] Staff sold-out toggle
+- [x] 📊 Sales reports by date and hour, with Excel export
 
 ### 🚧 In progress
-- [ ] Manager menu editor: add items, edit prices, archive
-- [ ] Staff sold-out toggle
+- [ ] 🎓 University-email-only sign-in
 
 ### 📌 Planned
-- [ ] 📊 Sales reports by date and hour, with Excel export
-- [ ] 🎓 University-email-only sign-in
 - [ ] ☕ Item options (size, milk, extra shot) and allergen tags
 - [ ] ⏰ Pickup time slots and "pause orders" for rush hours
 - [ ] 🌍 Turkish / English / Arabic with right-to-left support
 - [ ] 🌙 Dark and light themes
 - [ ] 🔢 Staff PIN system for shared terminals
-- [ ] 🐞 Bug report form
+- [ ] 🐞 Bug report form and developer dashboard
 - [ ] 📜 Terms of use and KVKK privacy notice
 - [ ] 📱 Installable app with "order ready" notifications
 - [ ] 🎨 Full UI redesign
