@@ -63,6 +63,9 @@ begin
     raise exception 'You must be logged in';
   end if;
 
+  -- One order at a time per student (prevents race conditions)
+  perform pg_advisory_xact_lock(hashtext(v_user::text));
+
   if p_items is null or jsonb_typeof(p_items) <> 'array' or jsonb_array_length(p_items) = 0 then
     raise exception 'Order is empty';
   end if;
