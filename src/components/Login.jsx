@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 export default function Login() {
@@ -7,8 +7,16 @@ export default function Login() {
   const [step, setStep] = useState("email");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [domains, setDomains] = useState([]);
 
   const cleanEmail = email.trim().toLowerCase();
+
+  useEffect(() => {
+    supabase
+      .from("allowed_email_domains")
+      .select("domain")
+      .then(({ data }) => setDomains((data ?? []).map((d) => d.domain)));
+  }, []);
 
   async function sendCode(e) {
     e.preventDefault();
@@ -51,6 +59,12 @@ export default function Login() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full border rounded-lg p-3"
           />
+          {domains.length > 0 && (
+            <p className="text-xs text-gray-500">
+              Students: use your {domains.map((d) => `@${d}`).join(" or ")}{" "}
+              email to order.
+            </p>
+          )}
           <button
             disabled={loading}
             className="w-full bg-amber-700 text-white rounded-lg p-3 disabled:opacity-50"
@@ -63,6 +77,13 @@ export default function Login() {
           <p className="text-sm text-gray-600">
             We sent a code to {cleanEmail}
           </p>
+          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
+            <span className="text-lg leading-none">📬</span>
+            <p className="text-sm text-amber-900">
+              Can't find the code? Check your{" "}
+              <span className="font-semibold">spam</span> folder.
+            </p>
+          </div>
           <input
             inputMode="numeric"
             autoComplete="one-time-code"
@@ -89,13 +110,6 @@ export default function Login() {
           >
             Use a different email
           </button>
-          <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
-            <span className="text-lg leading-none">📬</span>
-            <p className="text-sm text-amber-900">
-              Can't find the code? Check your{" "}
-              <span className="font-semibold">spam</span> folder.
-            </p>
-          </div>
         </form>
       )}
 
