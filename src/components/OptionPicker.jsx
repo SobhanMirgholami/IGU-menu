@@ -58,7 +58,7 @@ export default function OptionPicker({ item, onAdd, onCancel }) {
   return (
     <div className="mt-4 pt-4 border-t-2 border-dashed border-soft-line flex flex-col gap-5">
       {item.groups.map((group) => (
-        <fieldset key={group.id} className="flex flex-col gap-2.5">
+        <fieldset key={group.id} className="flex flex-col gap-2.5 min-w-0">
           <legend className="flex items-center gap-2 mb-2.5">
             <span className="font-display font-bold text-lg">{pick(group.name, lang)}</span>
             <span

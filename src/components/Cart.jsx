@@ -157,7 +157,7 @@ export default function Cart({ cart, setCart }) {
         ))}
       </ul>
 
-      <fieldset className="flex flex-col gap-2.5">
+      <fieldset className="flex flex-col gap-2.5 min-w-0">
         <legend className="font-display font-bold text-lg mb-2.5">{t('cart.pickupTime')}</legend>
         {hasOpenSlot ? (
           <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1">
