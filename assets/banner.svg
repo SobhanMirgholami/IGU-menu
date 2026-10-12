@@ -47,7 +47,7 @@
   <rect x="344" y="80" width="2" height="160" fill="url(#accentV)"/>
 
   <!-- Text block -->
-  <text x="385" y="112" font-family="Consolas, 'Courier New', monospace" font-size="16" fill="#8b949e">// hello, world</text>
+  <text x="385" y="112" font-family="Consolas, 'Courier New', monospace" font-size="16" fill="#8b949e">// building things that fix real problems</text>
 
   <text x="385" y="178" font-family="Consolas, 'Courier New', monospace" font-size="60" font-weight="700" fill="#ffffff"><tspan fill="#f59e0b">&lt;</tspan>sobhan<tspan fill="#f59e0b"> /&gt;</tspan></text>
 
@@ -64,7 +64,7 @@
 
     <rect x="980" y="143" width="150" height="34" rx="17" fill="#ffffff" fill-opacity="0.03" stroke="#30363d"/>
     <circle cx="1002" cy="160" r="4" fill="#f59e0b"/>
-    <text x="1016" y="165">Python</text>
+    <text x="1016" y="165">Supabase</text>
 
     <rect x="980" y="188" width="150" height="34" rx="17" fill="#ffffff" fill-opacity="0.03" stroke="#30363d"/>
     <circle cx="1002" cy="205" r="4" fill="#f59e0b"/>
