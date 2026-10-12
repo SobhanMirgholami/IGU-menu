@@ -25,11 +25,18 @@ export default function Receipt({ order }) {
       <div className="border-t border-dashed border-black my-2" />
 
       {order.order_items.map((item) => (
-        <div key={item.id} className="flex justify-between">
-          <span>
-            {item.quantity} × {item.item_name.tr}
-          </span>
-          <span>{formatPrice(item.unit_price * item.quantity)}</span>
+        <div key={item.id}>
+          <div className="flex justify-between">
+            <span>
+              {item.quantity} × {item.item_name.tr}
+            </span>
+            <span>{formatPrice(item.unit_price * item.quantity)}</span>
+          </div>
+          {item.order_item_options.map((o) => (
+            <p key={o.id} className="ps-4">
+              - {o.name.tr}
+            </p>
+          ))}
         </div>
       ))}
 
