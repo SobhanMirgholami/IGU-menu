@@ -109,6 +109,8 @@ def chart_text(size=9, bold=False, color=MUTED):
 
 def finish_chart(chart, title):
     chart.title = title
+    chart.title.overlay = False          # title sits above the plot, never on top of it
+    chart.auto_title_deleted = False
     chart.title.tx.rich.p[0].pPr = ParagraphProperties(
         defRPr=CharacterProperties(latin=DrawingFont(typeface=FONT), sz=1200, b=True, solidFill=INK))
     chart.legend = None
@@ -301,6 +303,7 @@ for sheet_name, L in LABELS.items():
     value_labels(c3.series[0], COUNT)
     c3.gapWidth = 40
     c3.x_axis.scaling.orientation = 'maxMin'     # best seller on top
+    c3.y_axis.crosses = 'max'                    # ...and keep the numbers at the bottom, away from the title
     c3.y_axis.number_format = COUNT
     finish_chart(c3, L['c3'])
 
@@ -312,6 +315,7 @@ for sheet_name, L in LABELS.items():
     value_labels(c4.series[0], MONEY_AXIS)
     c4.gapWidth = 40
     c4.x_axis.scaling.orientation = 'maxMin'
+    c4.y_axis.crosses = 'max'
     c4.y_axis.number_format = MONEY_AXIS
     finish_chart(c4, L['c4'])
 
