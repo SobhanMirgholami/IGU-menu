@@ -1,4 +1,4 @@
-<img src="assets/banner.svg" alt="sobhan" width="100%">
+<img src="assets/banner1.svg" alt="sobhan" width="100%">
 
 <div align="center">
 
@@ -138,8 +138,8 @@ database/
 └── 10_pickup_slots.sql        Pickup slots, capacity, pause orders
 
 assets/
-└── banner.svg                 🎨 README banner
-```
+assets/
+└── banner1.svg                🎨 README banner```
 
 </details>
 
