@@ -1,22 +1,27 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { formatPrice, formatTime } from '../lib/format'
+import { pick } from '../lib/localize'
 import Receipt from './Receipt'
 import OrderingToggle from './OrderingToggle'
+import { ClockIcon } from './icons'
 
-const NEXT_STEP = {
-  pending: { status: 'preparing', label: 'Start preparing' },
-  preparing: { status: 'ready', label: 'Ready' },
-  ready: { status: 'completed', label: 'Picked up' },
+const NEXT_STATUS = {
+  pending: 'preparing',
+  preparing: 'ready',
+  ready: 'completed',
 }
 
 const STATUS_STYLE = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  preparing: 'bg-blue-100 text-blue-800',
-  ready: 'bg-green-100 text-green-800',
+  pending: 'bg-pop text-ink',
+  preparing: 'bg-brand-soft text-ink',
+  ready: 'bg-mint text-ink',
 }
 
 export default function StaffDashboard() {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.resolvedLanguage
   const [orders, setOrders] = useState([])
   const [error, setError] = useState(null)
   const [receiptOrder, setReceiptOrder] = useState(null)
@@ -53,7 +58,7 @@ export default function StaffDashboard() {
   }, [receiptOrder])
 
   async function changeStatus(orderId, status) {
-    if (status === 'cancelled' && !confirm(`Cancel order #${orderId}?`)) return
+    if (status === 'cancelled' && !confirm(t('staff.confirmCancel', { id: orderId }))) return
 
     const { error } = await supabase.rpc('update_order_status', {
       p_order_id: orderId,
@@ -69,105 +74,123 @@ export default function StaffDashboard() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
       <OrderingToggle />
 
-      <h2 className="text-xl font-semibold text-amber-800">
-        Active orders ({orders.length})
+      <h2 className="font-display font-extrabold text-2xl">
+        {t('staff.activeOrders', { count: orders.length })}
       </h2>
 
-      {error && <p className="text-red-600">{error}</p>}
-      {orders.length === 0 && <p className="text-gray-500">No active orders.</p>}
+      {error && <p className="text-red-600 dark:text-red-400">{error}</p>}
+      {orders.length === 0 && <p className="text-muted">{t('staff.noOrders')}</p>}
 
-      {orders.map((order) => {
-        const next = NEXT_STEP[order.status]
-        const needsPayment = next.status === 'completed' && !order.is_paid
+      <div className="grid gap-4 sm:grid-cols-2">
+        {orders.map((order) => {
+          const nextStatus = NEXT_STATUS[order.status]
+          const needsPayment = nextStatus === 'completed' && !order.is_paid
 
-        return (
-          <div key={order.id} className="bg-white rounded-lg p-4 shadow-sm space-y-3">
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="text-2xl font-bold">#{order.id}</span>
-                {order.pickup_at && (
-                  <span className="ms-3 text-lg font-semibold text-amber-800">
-                    🕒 {formatTime(order.pickup_at)}
-                  </span>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <span
-                  className={`text-xs px-2 py-1 rounded-full ${
-                    order.is_paid ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'
-                  }`}
-                >
-                  {order.is_paid ? 'Paid' : 'Unpaid'}
-                </span>
-                <span className={`text-xs px-2 py-1 rounded-full ${STATUS_STYLE[order.status]}`}>
-                  {order.status}
-                </span>
-              </div>
-            </div>
-
-            <ul className="text-sm">
-              {order.order_items.map((item) => (
-                <li key={item.id}>
-                  {item.quantity} × {item.item_name.tr}
-                  {item.order_item_options.length > 0 && (
-                    <span className="block text-xs text-gray-500 ms-6">
-                      {item.order_item_options.map((o) => o.name.tr).join(', ')}
+          return (
+            <article
+              key={order.id}
+              className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4 flex flex-col gap-3"
+            >
+              <div className="flex justify-between items-start gap-2">
+                <div className="flex flex-col">
+                  <span className="font-display font-extrabold text-3xl leading-none">#{order.id}</span>
+                  {order.pickup_at && (
+                    <span className="flex items-center gap-1.5 mt-1.5 font-bold text-brand dark:text-pop">
+                      <ClockIcon size={16} strokeWidth={2.4} />
+                      {formatTime(order.pickup_at)}
                     </span>
                   )}
-                </li>
-              ))}
-            </ul>
+                </div>
+                <div className="flex flex-col items-end gap-1.5">
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${STATUS_STYLE[order.status]}`}>
+                    {t(`staff.status.${order.status}`)}
+                  </span>
+                  <span
+                    className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                      order.is_paid
+                        ? 'bg-mint-soft text-ink'
+                        : 'bg-chip text-muted border border-soft-line'
+                    }`}
+                  >
+                    {order.is_paid ? t('staff.paid') : t('staff.unpaid')}
+                  </span>
+                </div>
+              </div>
 
-            {order.note && (
-              <p className="text-sm bg-amber-50 rounded p-2">Note: {order.note}</p>
-            )}
+              <ul className="flex flex-col gap-1.5">
+                {order.order_items.map((item) => (
+                  <li key={item.id}>
+                    <span className="font-semibold">
+                      {item.quantity} × {pick(item.item_name, lang)}
+                    </span>
+                    {item.order_item_options.length > 0 && (
+                      <span className="block text-sm text-muted ms-6">
+                        {item.order_item_options
+                          .map((o) => pick(o.name, lang))
+                          .join(lang === 'ar' ? '، ' : ', ')}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
 
-            <div className="flex justify-between text-sm text-gray-500">
-              <span>Ordered {formatTime(order.created_at)}</span>
-              <span className="font-semibold text-gray-800">{formatPrice(order.total)}</span>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {!order.is_paid && (
-                <button
-                  onClick={() => markPaid(order.id)}
-                  className="px-3 py-2 rounded-lg border border-green-600 text-green-700"
-                >
-                  Mark paid
-                </button>
+              {order.note && (
+                <p className="text-sm bg-pop/30 dark:bg-chip rounded-xl px-3 py-2">
+                  {t('staff.note', { note: order.note })}
+                </p>
               )}
 
-              <button
-                onClick={() => setReceiptOrder(order)}
-                className="px-3 py-2 rounded-lg border border-gray-300"
-              >
-                Print
-              </button>
+              <div className="flex justify-between items-baseline text-sm text-muted">
+                <span>{t('staff.ordered', { time: formatTime(order.created_at) })}</span>
+                <span className="font-display font-extrabold text-lg text-fg">{formatPrice(order.total)}</span>
+              </div>
 
-              <button
-                onClick={() => changeStatus(order.id, next.status)}
-                disabled={needsPayment}
-                title={needsPayment ? 'Mark as paid first' : ''}
-                className="flex-1 bg-amber-700 text-white rounded-lg p-2 disabled:opacity-40"
-              >
-                {next.label}
-              </button>
+              <div className="flex flex-wrap gap-2">
+                {!order.is_paid && (
+                  <button
+                    onClick={() => markPaid(order.id)}
+                    className="h-12 px-4 rounded-2xl border-2 border-ink bg-mint text-ink font-bold"
+                  >
+                    {t('staff.markPaid')}
+                  </button>
+                )}
 
-              {!order.is_paid && (
                 <button
-                  onClick={() => changeStatus(order.id, 'cancelled')}
-                  className="px-3 py-2 rounded-lg border border-red-300 text-red-600"
+                  onClick={() => setReceiptOrder(order)}
+                  className="h-12 px-4 rounded-2xl border-2 border-line bg-surface font-bold"
                 >
-                  Cancel
+                  {t('staff.print')}
                 </button>
+
+                <button
+                  onClick={() => changeStatus(order.id, nextStatus)}
+                  disabled={needsPayment}
+                  title={needsPayment ? t('staff.payFirst') : ''}
+                  className="grow h-12 px-4 rounded-2xl border-2 border-ink bg-brand text-white font-bold shadow-hard-sm disabled:opacity-40 disabled:shadow-none"
+                >
+                  {t(`staff.next.${order.status}`)}
+                </button>
+
+                {!order.is_paid && (
+                  <button
+                    onClick={() => changeStatus(order.id, 'cancelled')}
+                    className="h-12 px-4 rounded-2xl border-2 border-red-300 dark:border-red-400 text-red-600 dark:text-red-400 font-bold"
+                  >
+                    {t('staff.cancel')}
+                  </button>
+                )}
+              </div>
+
+              {needsPayment && (
+                <p className="text-xs font-semibold text-muted">{t('staff.payFirst')}</p>
               )}
-            </div>
-          </div>
-        )
-      })}
+            </article>
+          )
+        })}
+      </div>
 
       <Receipt order={receiptOrder} />
     </div>

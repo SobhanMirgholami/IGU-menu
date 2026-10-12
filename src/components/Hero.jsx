@@ -8,9 +8,11 @@ export default function Hero({ name, signedIn, children }) {
   const { t } = useTranslation()
 
   return (
-    <header className="relative bg-brand text-white rounded-b-[36px] overflow-hidden px-5 pt-5 pb-8">
-      <div aria-hidden="true" className="absolute -top-16 -end-12 w-44 h-44 rounded-full bg-pop" />
-      <div aria-hidden="true" className="absolute top-40 end-10 w-16 h-16 rounded-full border-[3px] border-white opacity-25" />
+    <header className="relative bg-brand text-white rounded-b-[36px] px-5 pt-5 pb-8">
+      <div aria-hidden="true" className="absolute inset-0 overflow-hidden rounded-b-[36px] pointer-events-none">
+        <div className="absolute -top-16 -end-12 w-44 h-44 rounded-full bg-pop" />
+        <div className="absolute top-40 end-10 w-16 h-16 rounded-full border-[3px] border-white opacity-25" />
+      </div>
 
       <div className="relative max-w-md mx-auto flex flex-col gap-5">
         <div className="flex items-center justify-between">

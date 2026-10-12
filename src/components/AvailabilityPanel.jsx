@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { pick } from '../lib/localize'
 
 export default function AvailabilityPanel() {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.resolvedLanguage
   const [items, setItems] = useState([])
 
   async function load() {
@@ -29,17 +33,21 @@ export default function AvailabilityPanel() {
   }
 
   return (
-    <ul className="space-y-2">
+    <ul className="grid gap-3 sm:grid-cols-2">
       {items.map((item) => (
-        <li key={item.id} className="flex justify-between items-center bg-white rounded-lg p-3 shadow-sm">
-          <span>{item.name.tr}</span>
+        <li
+          key={item.id}
+          className="flex justify-between items-center gap-3 bg-surface border-2 border-line rounded-[20px] shadow-hard-sm p-3 ps-4"
+        >
+          <span className="font-bold">{pick(item.name, lang)}</span>
           <button
             onClick={() => toggle(item)}
-            className={`px-4 py-2 rounded-lg text-white ${
-              item.is_available ? 'bg-green-600' : 'bg-red-600'
+            aria-pressed={!item.is_available}
+            className={`h-11 px-4 rounded-full border-2 border-ink font-bold text-ink ${
+              item.is_available ? 'bg-mint' : 'bg-coral'
             }`}
           >
-            {item.is_available ? 'Available' : 'Sold out'}
+            {item.is_available ? t('staff.available') : t('staff.soldOut')}
           </button>
         </li>
       ))}

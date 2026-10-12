@@ -18,16 +18,8 @@ import CafeSettings from './components/CafeSettings'
 import { ArrowIcon, LogoutIcon } from './components/icons'
 
 const TABS = {
-  staff: [
-    { id: 'orders', label: 'Orders' },
-    { id: 'availability', label: 'Sold out' },
-  ],
-  manager: [
-    { id: 'orders', label: 'Orders' },
-    { id: 'menu', label: 'Menu' },
-    { id: 'reports', label: 'Reports' },
-    { id: 'settings', label: 'Settings' },
-  ],
+  staff: ['orders', 'availability'],
+  manager: ['orders', 'menu', 'reports', 'settings'],
 }
 
 function nameFromEmail(email) {
@@ -126,10 +118,13 @@ function App() {
     const tabs = TABS[role] ?? []
 
     return (
-      <div className="min-h-screen bg-page text-fg p-6">
-        <div className="max-w-3xl mx-auto flex flex-col gap-6">
-          <header className="flex justify-between items-center gap-2">
-            <h1 className="font-display font-extrabold text-3xl text-brand dark:text-pop">IGU Café</h1>
+      <div className="min-h-screen bg-page text-fg p-5 sm:p-8">
+        <div className="max-w-4xl mx-auto flex flex-col gap-6">
+          <header className="flex justify-between items-center gap-3">
+            <div className="flex items-center gap-2">
+              <h1 className="font-display font-extrabold text-3xl text-brand dark:text-pop">IGU Café</h1>
+              <span aria-hidden="true" className="w-2.5 h-2.5 rounded-full bg-pop" />
+            </div>
             <div className="flex items-center gap-2">
               <LanguageSwitcher />
               <ThemeToggle />
@@ -144,21 +139,22 @@ function App() {
           </header>
 
           <p className="text-sm text-muted">
-            {t('app.signedInAs', { email: session.user.email })} ({role})
+            {t('app.signedInAs', { email: session.user.email })} · {t(`staff.role.${role}`)}
           </p>
 
           <nav className="flex flex-wrap gap-2">
-            {tabs.map((tabItem) => (
+            {tabs.map((tabId) => (
               <button
-                key={tabItem.id}
-                onClick={() => setTab(tabItem.id)}
-                className={`px-4 h-10 rounded-full border-2 font-bold text-sm ${
-                  tab === tabItem.id
+                key={tabId}
+                onClick={() => setTab(tabId)}
+                aria-pressed={tab === tabId}
+                className={`px-4 h-11 rounded-full border-2 font-bold text-sm ${
+                  tab === tabId
                     ? 'bg-ink text-white border-ink dark:bg-pop dark:text-ink dark:border-pop'
                     : 'bg-surface text-fg border-line'
                 }`}
               >
-                {tabItem.label}
+                {t(`staff.tabs.${tabId}`)}
               </button>
             ))}
           </nav>

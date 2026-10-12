@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 
 export default function OrderingToggle() {
+  const { t } = useTranslation()
   const [accepting, setAccepting] = useState(null)
 
   async function load() {
@@ -28,7 +30,7 @@ export default function OrderingToggle() {
   }, [])
 
   async function toggle() {
-    if (accepting && !confirm('Pause online orders? Students will not be able to order.')) return
+    if (accepting && !confirm(t('staff.confirmPause'))) return
 
     const { error } = await supabase.rpc('set_accepting_orders', { p_accepting: !accepting })
     if (error) alert(error.message)
@@ -39,18 +41,26 @@ export default function OrderingToggle() {
 
   return (
     <div
-      className={`flex items-center justify-between rounded-lg p-3 ${
-        accepting ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+      className={`flex items-center justify-between gap-3 rounded-[20px] border-2 p-3 ps-4 ${
+        accepting
+          ? 'bg-mint-soft text-ink border-ink dark:bg-surface dark:text-fg dark:border-line'
+          : 'bg-coral-soft text-ink border-ink dark:bg-surface dark:text-fg dark:border-coral'
       }`}
     >
-      <span className={accepting ? 'text-green-800' : 'text-red-800'}>
-        {accepting ? '🟢 Taking online orders' : '⏸️ Online orders paused'}
+      <span className="flex items-center gap-2.5 font-bold">
+        <span
+          aria-hidden="true"
+          className={`w-3 h-3 rounded-full ${accepting ? 'bg-mint' : 'bg-coral'}`}
+        />
+        {accepting ? t('staff.accepting') : t('staff.paused')}
       </span>
       <button
         onClick={toggle}
-        className={`px-4 py-2 rounded-lg text-white ${accepting ? 'bg-red-600' : 'bg-green-600'}`}
+        className={`h-11 px-5 rounded-full border-2 border-ink font-bold text-ink shadow-hard-sm ${
+          accepting ? 'bg-coral' : 'bg-mint'
+        }`}
       >
-        {accepting ? 'Pause' : 'Resume'}
+        {accepting ? t('staff.pause') : t('staff.resume')}
       </button>
     </div>
   )
