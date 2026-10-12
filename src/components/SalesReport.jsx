@@ -78,8 +78,10 @@ export default function SalesReport() {
       ...report.items.map((item) => [item.name, item.quantity, item.income]),
     ]
 
+    const toCell = (cell) => (typeof cell === 'number' ? String(cell).replace('.', ',') : String(cell ?? ''))
+
     const csv = rows
-      .map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(';'))
+      .map((row) => row.map((cell) => `"${toCell(cell).replaceAll('"', '""')}"`).join(';'))
       .join('\n')
 
     const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' })
@@ -94,7 +96,12 @@ export default function SalesReport() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4 flex flex-col gap-4">
+      <div className="hidden print:block">
+        <h1 className="font-display font-extrabold text-2xl">IGU Café · {t('manager.report.report')}</h1>
+        <p dir="ltr" className="text-start">{from} – {to}, {pad(hourFrom)}–{pad(hourTo)}</p>
+      </div>
+
+      <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4 flex flex-col gap-4 print:hidden">
         <div className="flex flex-wrap gap-2">
           {PRESETS.map((preset) => (
             <button
@@ -157,14 +164,22 @@ export default function SalesReport() {
           <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4">
             <div className="flex justify-between items-center gap-3 mb-3">
               <h3 className="font-display font-extrabold text-xl">{t('manager.report.itemsSold')}</h3>
-              {report.items.length > 0 && (
+              <div className="flex flex-wrap gap-2 print:hidden">
                 <button
-                  onClick={exportCsv}
-                  className="h-10 px-4 rounded-full border-2 border-ink bg-mint text-ink font-bold text-sm"
+                  onClick={() => window.print()}
+                  className="h-10 px-4 rounded-full border-2 border-line bg-surface font-bold text-sm"
                 >
-                  {t('manager.report.export')}
+                  {t('manager.report.print')}
                 </button>
-              )}
+                {report.items.length > 0 && (
+                  <button
+                    onClick={exportCsv}
+                    className="h-10 px-4 rounded-full border-2 border-ink bg-mint text-ink font-bold text-sm"
+                  >
+                    {t('manager.report.export')}
+                  </button>
+                )}
+              </div>
             </div>
 
             {report.items.length === 0 ? (

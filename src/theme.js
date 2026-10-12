@@ -27,6 +27,14 @@ export function setTheme(theme) {
   applyTheme(theme)
 }
 
+window.addEventListener('beforeprint', () => {
+  document.documentElement.classList.remove('dark')
+})
+
+window.addEventListener('afterprint', () => {
+  applyTheme(getTheme())
+})
+
 export function onSystemChange(callback) {
   media.addEventListener('change', callback)
   return () => media.removeEventListener('change', callback)

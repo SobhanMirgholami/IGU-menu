@@ -75,24 +75,36 @@ html[lang='ar'] .font-display {
 }
 
 @media print {
-  @page {
-    size: 80mm auto;
-    margin: 0;
+  :root,
+  .dark {
+    --page: #ffffff;
+    --surface: #ffffff;
+    --fg: #000000;
+    --muted: #333333;
+    --line: #000000;
+    --soft-line: #cccccc;
+    --chip: #f3f3f3;
+    --shadow: transparent;
+    color-scheme: light;
   }
 
-  body * {
+  body {
+    background: #ffffff !important;
+    color: #000000;
+  }
+
+  html.printing-receipt body * {
     visibility: hidden;
   }
 
-  #receipt,
-  #receipt * {
+  html.printing-receipt #receipt,
+  html.printing-receipt #receipt * {
     visibility: visible;
   }
 
-  #receipt {
+  html.printing-receipt #receipt {
     position: absolute;
     left: 0;
     top: 0;
-    width: 80mm;
   }
 }

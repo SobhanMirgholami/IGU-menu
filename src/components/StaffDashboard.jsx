@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { formatPrice, formatTime } from '../lib/format'
 import { pick } from '../lib/localize'
+import { printReceipt } from '../lib/print'
 import Receipt from './Receipt'
 import OrderingToggle from './OrderingToggle'
 import { ClockIcon } from './icons'
@@ -24,7 +25,7 @@ export default function StaffDashboard() {
   const lang = i18n.resolvedLanguage
   const [orders, setOrders] = useState([])
   const [error, setError] = useState(null)
-  const [receiptOrder, setReceiptOrder] = useState(null)
+  const [printJob, setPrintJob] = useState(null)
 
   async function loadOrders() {
     const { data, error } = await supabase
@@ -52,10 +53,8 @@ export default function StaffDashboard() {
   }, [])
 
   useEffect(() => {
-    if (!receiptOrder) return
-    window.print()
-    setReceiptOrder(null)
-  }, [receiptOrder])
+    if (printJob) printReceipt()
+  }, [printJob])
 
   async function changeStatus(orderId, status) {
     if (status === 'cancelled' && !confirm(t('staff.confirmCancel', { id: orderId }))) return
@@ -159,7 +158,7 @@ export default function StaffDashboard() {
                 )}
 
                 <button
-                  onClick={() => setReceiptOrder(order)}
+                  onClick={() => setPrintJob({ order, at: Date.now() })}
                   className="h-12 px-4 rounded-2xl border-2 border-line bg-surface font-bold"
                 >
                   {t('staff.print')}
@@ -192,7 +191,7 @@ export default function StaffDashboard() {
         })}
       </div>
 
-      <Receipt order={receiptOrder} />
+      <Receipt order={printJob?.order} />
     </div>
   )
 }

@@ -14,7 +14,7 @@ export default function Receipt({ order }) {
   if (!order) return null
 
   return (
-    <div id="receipt" className="hidden print:block text-black bg-white p-3 font-mono text-xs" dir="ltr">
+    <div id="receipt" aria-hidden="true" className="fixed top-0 left-0 invisible pointer-events-none w-[80mm] text-black bg-white p-3 font-mono text-xs" dir="ltr">
       <p className="text-center text-base font-bold">IGU Café</p>
       <p className="text-center">{formatDateTime(order.created_at)}</p>
 

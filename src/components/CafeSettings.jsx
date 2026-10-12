@@ -39,6 +39,15 @@ export default function CafeSettings() {
 
   async function save(e) {
     e.preventDefault()
+
+    const [openHour, openMinute] = form.open_time.split(':').map(Number)
+    if (!form.open_time || !form.close_time || form.open_time >= form.close_time) {
+      return setMessage({ type: 'error', text: t('manager.settings.errors.order') })
+    }
+    if (openMinute % Number(form.slot_minutes) !== 0 || Number.isNaN(openHour)) {
+      return setMessage({ type: 'error', text: t('manager.settings.errors.align', { minutes: form.slot_minutes }) })
+    }
+
     setSaving(true)
 
     const { data, error } = await supabase
@@ -55,7 +64,7 @@ export default function CafeSettings() {
 
     setSaving(false)
 
-    if (error) setMessage({ type: 'error', text: error.message })
+    if (error) setMessage({ type: 'error', text: error.code === '23514' ? t('manager.settings.errors.invalid') : error.message })
     else if (!data || data.length === 0) setMessage({ type: 'error', text: t('manager.errors.permission') })
     else setMessage({ type: 'success', text: t('manager.settings.saved') })
   }

@@ -120,7 +120,7 @@ function App() {
     return (
       <div className="min-h-screen bg-page text-fg p-5 sm:p-8">
         <div className="max-w-4xl mx-auto flex flex-col gap-6">
-          <header className="flex justify-between items-center gap-3">
+          <header className="flex justify-between items-center gap-3 print:hidden">
             <div className="flex items-center gap-2">
               <h1 className="font-display font-extrabold text-3xl text-brand dark:text-pop">IGU Café</h1>
               <span aria-hidden="true" className="w-2.5 h-2.5 rounded-full bg-pop" />
@@ -138,11 +138,11 @@ function App() {
             </div>
           </header>
 
-          <p className="text-sm text-muted">
+          <p className="text-sm text-muted print:hidden">
             {t('app.signedInAs', { email: session.user.email })} · {t(`staff.role.${role}`)}
           </p>
 
-          <nav className="flex flex-wrap gap-2">
+          <nav className="flex flex-wrap gap-2 print:hidden">
             {tabs.map((tabId) => (
               <button
                 key={tabId}

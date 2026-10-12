@@ -191,7 +191,8 @@
       "item": "Ürün",
       "qty": "Adet",
       "busiest": "En yoğun saatler",
-      "report": "Rapor"
+      "report": "Rapor",
+      "print": "Raporu yazdır"
     },
     "settings": {
       "title": "Kafe ayarları",
@@ -202,7 +203,12 @@
       "lead": "En az hazırlık süresi (dakika)",
       "save": "Ayarları kaydet",
       "saved": "Ayarlar kaydedildi.",
-      "loading": "Yükleniyor..."
+      "loading": "Yükleniyor...",
+      "errors": {
+        "order": "Kapanış saati açılış saatinden sonra olmalı.",
+        "align": "{{minutes}} dakikalık aralıklarda açılış saati bir aralığın başına denk gelmeli, örneğin 08:00 veya 08:30.",
+        "invalid": "Bu ayarlar geçerli değil. Lütfen saatleri ve sayıları kontrol edin."
+      }
     },
     "translate": "İngilizce ve Arapçaya çevir",
     "translating": "Çevriliyor...",

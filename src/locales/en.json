@@ -191,7 +191,8 @@
       "item": "Item",
       "qty": "Qty",
       "busiest": "Busiest hours",
-      "report": "Report"
+      "report": "Report",
+      "print": "Print report"
     },
     "settings": {
       "title": "Café settings",
@@ -202,7 +203,12 @@
       "lead": "Minimum preparation time (minutes)",
       "save": "Save settings",
       "saved": "Settings saved.",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "errors": {
+        "order": "Closing time must be later than opening time.",
+        "align": "With {{minutes}}-minute slots, the opening time must start on a slot, for example 08:00 or 08:30.",
+        "invalid": "These settings are not valid. Please check the times and numbers."
+      }
     },
     "translate": "Translate to English & Arabic",
     "translating": "Translating...",
