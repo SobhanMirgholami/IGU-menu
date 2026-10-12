@@ -1,5 +1,6 @@
 import { Trans, useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { unsubscribePush } from '../lib/pwa'
 import LanguageSwitcher from './LanguageSwitcher'
 import ThemeToggle from './ThemeToggle'
 import { LogoutIcon } from './icons'
@@ -25,7 +26,10 @@ export default function Hero({ name, signedIn, children }) {
             <ThemeToggle />
             {signedIn && (
               <button
-                onClick={() => supabase.auth.signOut()}
+                onClick={async () => {
+                  await unsubscribePush() // this phone stops getting this student's pushes
+                  supabase.auth.signOut()
+                }}
                 aria-label={t('app.signOut')}
                 className="w-11 h-11 rounded-full border-2 border-ink bg-white text-ink flex items-center justify-center"
               >

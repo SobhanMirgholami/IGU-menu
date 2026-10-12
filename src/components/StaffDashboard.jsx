@@ -65,7 +65,16 @@ export default function StaffDashboard() {
       p_status: status,
     })
 
-    if (error && error.message !== 'PIN_REQUIRED') alert(error.message)
+    if (error) {
+      if (error.message !== 'PIN_REQUIRED') alert(error.message)
+      return
+    }
+
+    // Tell the student's phone, even if their app is closed (Web Push).
+    // Fire and forget: if it fails, the order is still ready and shows live in the app.
+    if (status === 'ready') {
+      supabase.functions.invoke('notify-order-ready', { body: { order_id: orderId } }).catch(() => {})
+    }
   }
 
   async function markPaid(orderId) {

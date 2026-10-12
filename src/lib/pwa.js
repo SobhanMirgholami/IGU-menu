@@ -1,8 +1,15 @@
 // Installable app + "order ready" notifications.
 //
-// What works today: the notification appears while the app is open or running in the
-// background (phone locked, other app on screen). If the app is fully closed, it can't
-// fire yet. That needs Web Push from a server, which is a later step.
+// Two ways a notification arrives:
+//  1. App open or in the background: MyOrders sees the change live and shows it (notifyOrderReady).
+//  2. App closed: Web Push. The staff screen calls the notify-order-ready Edge Function,
+//     which sends a push to the addresses saved by subscribeToPush(), and sw.js shows it.
+// Both use the same tag, so the student never gets the same notification twice.
+import { supabase } from './supabase'
+
+// Public half of the Web Push key pair (safe to publish).
+// The private half lives only in Supabase secrets (see push-keys.local, never committed).
+const VAPID_PUBLIC_KEY = 'BPaPR2koXBcXTQ9puec9X9JByUPt9JoABq2E68W7M1yh4zl97bTL3yiZVNEQSskeO_AzaIDhoJkwuPFiml_ggR0'
 
 export function registerServiceWorker() {
   if (!('serviceWorker' in navigator) || !import.meta.env.PROD) return
@@ -84,5 +91,55 @@ export async function notifyOrderReady(orderId, { title, body }) {
     else new Notification(title, options)
   } catch {
     // notifications blocked or not available: the big ready ticket still shows
+  }
+}
+
+// ---------- Web Push (works even when the app is closed) ----------
+
+function keyToBytes(base64url) {
+  const base64 = (base64url + '='.repeat((4 - (base64url.length % 4)) % 4)).replace(/-/g, '+').replace(/_/g, '/')
+  return Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
+}
+
+export const pushSupported = () => notificationsSupported() && 'PushManager' in window
+
+// Ask the phone for a push address and save it for this student.
+// Call only after notification permission is granted. Never throws.
+export async function subscribeToPush(lang) {
+  if (!pushSupported() || Notification.permission !== 'granted') return false
+  try {
+    const registration = await navigator.serviceWorker.getRegistration()
+    if (!registration) return false // no service worker in dev mode
+
+    const subscription =
+      (await registration.pushManager.getSubscription()) ||
+      (await registration.pushManager.subscribe({
+        userVisibleOnly: true, // every push must show a notification (browsers require it)
+        applicationServerKey: keyToBytes(VAPID_PUBLIC_KEY),
+      }))
+
+    const { keys } = subscription.toJSON()
+    const { error } = await supabase.rpc('save_push_subscription', {
+      p_endpoint: subscription.endpoint,
+      p_p256dh: keys.p256dh,
+      p_auth: keys.auth,
+      p_lang: lang,
+    })
+    return !error
+  } catch {
+    return false
+  }
+}
+
+// On sign out: this phone should stop getting the previous student's notifications
+export async function unsubscribePush() {
+  try {
+    const registration = await navigator.serviceWorker?.getRegistration()
+    const subscription = await registration?.pushManager.getSubscription()
+    if (!subscription) return
+    await supabase.rpc('delete_push_subscription', { p_endpoint: subscription.endpoint })
+    await subscription.unsubscribe()
+  } catch {
+    // signing out still works
   }
 }

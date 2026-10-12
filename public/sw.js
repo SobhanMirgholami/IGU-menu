@@ -1,11 +1,12 @@
 // IGU Café service worker
 // - makes the app installable
 // - keeps the app shell so it opens fast and shows a page even with bad Wi-Fi
-// - opens the app when an "order ready" notification is tapped
+// - shows "order ready" Web Push notifications, even when the app is closed
+// - opens the app when a notification is tapped
 // Orders, menu and login always go to the network (Supabase is a different site,
 // and this file never touches those requests).
 
-const CACHE = 'igu-cafe-v1'
+const CACHE = 'igu-cafe-v2'
 const SHELL = ['/', '/cafe-icon.svg', '/manifest.webmanifest', '/icons/icon-192.png']
 
 self.addEventListener('install', (event) => {
@@ -55,6 +56,27 @@ self.addEventListener('fetch', (event) => {
       )
     )
   }
+})
+
+// A push from the notify-order-ready Edge Function
+self.addEventListener('push', (event) => {
+  let data = {}
+  try {
+    data = event.data ? event.data.json() : {}
+  } catch {
+    data = { body: event.data?.text() }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'IGU Café', {
+      body: data.body || '',
+      icon: '/icons/icon-192.png',
+      badge: '/icons/badge-96.png',
+      tag: data.orderId ? `order-${data.orderId}` : 'igu-cafe', // same tag as the in-app one: no doubles
+      renotify: true,
+      vibrate: [200, 100, 200],
+    })
+  )
 })
 
 self.addEventListener('notificationclick', (event) => {

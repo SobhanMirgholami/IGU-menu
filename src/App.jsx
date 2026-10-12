@@ -22,6 +22,7 @@ import BugReports from './components/BugReports'
 import Footer from './components/Footer'
 import LegalPage from './components/LegalPage'
 import { getStaffSession, clearStaffSession, lockTerminal, onTerminalLocked } from './lib/staffSession'
+import { subscribeToPush } from './lib/pwa'
 import { ArrowIcon, LogoutIcon } from './components/icons'
 
 const TABS = {
@@ -50,7 +51,7 @@ function nameFromEmail(email) {
 }
 
 function App() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [session, setSession] = useState(null)
   const [role, setRole] = useState(null)
   const [checking, setChecking] = useState(true)
@@ -94,6 +95,13 @@ function App() {
     }
     loadRole()
   }, [session])
+
+  // Students who already allowed notifications: keep this phone's push address fresh
+  // (and in the current language, so the push arrives in the right language)
+  const lang = i18n.resolvedLanguage
+  useEffect(() => {
+    if (role === 'student') subscribeToPush(lang)
+  }, [role, lang])
 
   // Shared staff terminal: is a saved PIN session still alive?
   useEffect(() => {

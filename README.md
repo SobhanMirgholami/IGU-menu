@@ -56,7 +56,7 @@ I designed the look myself before writing the code: **bold and playful, in the u
 - 📡 Watch your order status live: **received → being prepared → ready**
 - 🎫 A big "order ready" ticket with your number, pickup time, and progress steps
 - 📳 Your phone vibrates when your order is ready
-- 🔔 A notification pops up when your order is ready (while the app is open or in the background)
+- 🔔 A notification pops up when your order is ready, **even if the app is closed** (Web Push)
 - 📱 Install it on your home screen like a real app
 - 📜 Terms of Use and a KVKK privacy notice in all three languages, accepted once before the first order
 - 🐞 "Report a problem" in one tap: the page, language, and device are attached automatically
@@ -132,6 +132,7 @@ I treated security as a core feature, not an afterthought:
 | 🌙 Themes | CSS variables + View Transitions API |
 | 🖨️ Printing | Browser print, 80mm receipt sized in JS |
 | 📥 Excel export | JSZip fills a template built with Python (openpyxl) |
+| 🔔 Notifications | Web Push (VAPID) from a Supabase Edge Function |
 | 🚀 Hosting | Vercel, auto-deploy on every push |
 
 ---
@@ -204,7 +205,11 @@ database/
 ├── 11_hardening.sql          Locks down helper functions, adds indexes
 ├── 12_staff_pins.sql         Staff PINs, sessions, activity log
 ├── 13_bug_reports.sql        Bug reports with a daily limit
-└── 14_terms.sql              Terms acceptance, checked before every order
+├── 14_terms.sql              Terms acceptance, checked before every order
+└── 15_push.sql               Phones that get "order ready" pushes
+
+supabase/functions/
+└── notify-order-ready/        📨 Edge Function that sends the Web Push
 
 public/
 ├── manifest.webmanifest       📱 App name, colors, icons
@@ -232,7 +237,7 @@ npm install
 
 **2. Set up Supabase**
 - Create a project at [supabase.com](https://supabase.com)
-- Run the files in `database/` **in order** (01 → 14) in the SQL Editor
+- Run the files in `database/` **in order** (01 → 15) in the SQL Editor
 - Connect an SMTP provider and add `{{ .Token }}` to the **Magic Link** and **Confirm signup** email templates
 
 **3. Allow your university's email domain**
@@ -266,7 +271,17 @@ python tools/make-excel-template.py public/sales-report-template.xlsx
 npm run dev
 ```
 
-**6. Assign roles**
+**6. Turn on push notifications (optional)**
+```bash
+npx web-push generate-vapid-keys
+```
+- Put the **public** key in `VAPID_PUBLIC_KEY` in `src/lib/pwa.js`
+- In Supabase → **Edge Functions**, deploy `supabase/functions/notify-order-ready`
+- In Supabase → **Edge Functions → Secrets**, add `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, and `VAPID_SUBJECT` (`mailto:you@example.com`)
+
+> 🔐 The **private** key only ever goes into Supabase secrets. Never in the code, never on GitHub.
+
+**7. Assign roles**
 
 Sign in once with the person's email, then run:
 ```sql
@@ -298,6 +313,7 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] 🐞 Bug report form and developer dashboard
 - [x] 📜 Terms of use and KVKK privacy notice
 - [x] 📱 Installable app with "order ready" notifications
+- [x] 🔔 Web Push, so the notification arrives even when the app is closed
 - [x] 🎓 University-email-only ordering
 - [x] ☕ Item options (size, milk, extra shot) and allergen tags
 - [x] ⏰ Pickup time slots and "pause orders" for rush hours
@@ -313,7 +329,6 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [ ] 🤝 Showing the app to the café manager
 
 ### 📌 Planned
-- [ ] 🔔 "Order ready" push notifications even when the app is closed (Web Push)
 
 ### 🔮 Future ideas
 - [ ] 💳 Online payment (iyzico / PayTR)

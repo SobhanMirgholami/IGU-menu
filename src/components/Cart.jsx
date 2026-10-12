@@ -5,7 +5,7 @@ import { formatPrice, formatTime } from '../lib/format'
 import { pick } from '../lib/localize'
 import { translateError } from '../lib/errors'
 import { TERMS_VERSION } from '../lib/legal'
-import { askForNotifications, notificationsAllowed, notificationsSupported } from '../lib/pwa'
+import { askForNotifications, notificationsAllowed, notificationsSupported, subscribeToPush } from '../lib/pwa'
 import { MinusIcon, PlusIcon } from './icons'
 
 export default function Cart({ cart, setCart }) {
@@ -69,7 +69,9 @@ export default function Cart({ cart, setCart }) {
   }, [])
 
   async function enableNotifications() {
-    setNotify(await askForNotifications())
+    const result = await askForNotifications()
+    setNotify(result)
+    if (result === 'granted') subscribeToPush(lang) // also works when the app is closed
   }
 
   const total = cart.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0)
