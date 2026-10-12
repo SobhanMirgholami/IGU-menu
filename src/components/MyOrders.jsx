@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { formatPrice, formatTime } from '../lib/format'
+import { notifyOrderReady } from '../lib/pwa'
 import { CheckIcon, ClockIcon, CupIcon } from './icons'
 
 const STATUS_STYLE = {
@@ -124,7 +125,10 @@ export default function MyOrders() {
     data.forEach((order) => {
       const before = previousStatus.current[order.id]
       if (order.status === 'ready' && before && before !== 'ready') {
-        navigator.vibrate?.([200, 100, 200])
+        notifyOrderReady(order.id, {
+          title: t('pwa.readyTitle', { id: order.id }),
+          body: t('pwa.readyBody'),
+        })
       }
     })
 

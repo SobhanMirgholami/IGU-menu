@@ -56,6 +56,10 @@ I designed the look myself before writing the code: **bold and playful, in the u
 - 📡 Watch your order status live: **received → being prepared → ready**
 - 🎫 A big "order ready" ticket with your number, pickup time, and progress steps
 - 📳 Your phone vibrates when your order is ready
+- 🔔 A notification pops up when your order is ready (while the app is open or in the background)
+- 📱 Install it on your home screen like a real app
+- 📜 Terms of Use and a KVKK privacy notice in all three languages, accepted once before the first order
+- 🐞 "Report a problem" in one tap: the page, language, and device are attached automatically
 - 🌍 Turkish, English, or Arabic, with a full right-to-left layout
 - 🌙 Light and dark mode that follows your phone, or your own choice
 
@@ -89,6 +93,7 @@ I designed the look myself before writing the code: **bold and playful, in the u
 - 🖨️ Print reports straight from the browser
 - 👥 Add staff, set or reset PINs, and turn people off without losing their history
 - 🕵️ Activity log by day, shift, and person: who started, finished, cancelled, or took payment for each order
+- 🐞 Bug reports with status (new → working on it → fixed) and private notes
 - 🌍 Manager screens in all three languages
 
 ---
@@ -157,6 +162,10 @@ src/
 │   ├── ManagerOptions.jsx     🛠️ Option groups and choices
 │   ├── ManagerStaff.jsx       👥 Staff, PINs, and activity log
 │   ├── PinLock.jsx            🔢 "Who's working?" PIN screen
+│   ├── BugReportDialog.jsx    🐞 Report a problem
+│   ├── BugReports.jsx         🧰 Developer bug list
+│   ├── LegalPage.jsx          📜 Terms and privacy notice
+│   ├── Footer.jsx             🔗 Legal links, report, install
 │   ├── NameFields.jsx         🌍 3-language name inputs + translate
 │   ├── SalesReport.jsx        📊 Sales reports
 │   └── CafeSettings.jsx       ⚙️ Hours and slot settings
@@ -172,7 +181,11 @@ src/
 │   ├── exportExcel.js         📥 Fills the Excel template with report data
 │   ├── translate.js           🪄 Machine translation for names
 │   ├── staffSession.js        🔢 PIN session for staff actions
+│   ├── pwa.js                 📱 Install + order-ready notifications
+│   ├── legal.js               📜 Terms version and contact
 │   └── errors.js              ⚠️ Translates database errors
+├── legal/
+│   └── content.js             📜 Terms + KVKK text in 3 languages
 ├── i18n.js                    🌍 Language setup and RTL
 ├── theme.js                   🌙 Theme logic
 └── index.css                  🎨 Design tokens and themes
@@ -189,9 +202,14 @@ database/
 ├── 09_item_options.sql        Options, allergens, option pricing
 ├── 10_pickup_slots.sql        Pickup slots, capacity, pause orders
 ├── 11_hardening.sql          Locks down helper functions, adds indexes
-└── 12_staff_pins.sql         Staff PINs, sessions, activity log
+├── 12_staff_pins.sql         Staff PINs, sessions, activity log
+├── 13_bug_reports.sql        Bug reports with a daily limit
+└── 14_terms.sql              Terms acceptance, checked before every order
 
 public/
+├── manifest.webmanifest       📱 App name, colors, icons
+├── sw.js                      ⚙️ Service worker (install, offline shell, notification taps)
+├── icons/                     🖼️ App icons
 └── sales-report-template.xlsx 📊 Empty Excel dashboard the app fills in
 
 tools/
@@ -214,7 +232,7 @@ npm install
 
 **2. Set up Supabase**
 - Create a project at [supabase.com](https://supabase.com)
-- Run the files in `database/` **in order** (01 → 12) in the SQL Editor
+- Run the files in `database/` **in order** (01 → 14) in the SQL Editor
 - Connect an SMTP provider and add `{{ .Token }}` to the **Magic Link** and **Confirm signup** email templates
 
 **3. Allow your university's email domain**
@@ -277,6 +295,9 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] 🪄 Auto-translate menu names to English and Arabic
 - [x] 🛠️ Manager screen for item options, allergens, and diet tags
 - [x] 🔢 Staff PINs on a shared terminal, with an activity log by person and shift
+- [x] 🐞 Bug report form and developer dashboard
+- [x] 📜 Terms of use and KVKK privacy notice
+- [x] 📱 Installable app with "order ready" notifications
 - [x] 🎓 University-email-only ordering
 - [x] ☕ Item options (size, milk, extra shot) and allergen tags
 - [x] ⏰ Pickup time slots and "pause orders" for rush hours
@@ -289,11 +310,10 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] 🎫 "Order ready" ticket with a live progress tracker
 
 ### 🚧 In progress
-- [ ] 🐞 Bug report form and developer dashboard
+- [ ] 🤝 Showing the app to the café manager
 
 ### 📌 Planned
-- [ ] 📜 Terms of use and KVKK privacy notice
-- [ ] 📱 Installable app with "order ready" notifications
+- [ ] 🔔 "Order ready" push notifications even when the app is closed (Web Push)
 
 ### 🔮 Future ideas
 - [ ] 💳 Online payment (iyzico / PayTR)

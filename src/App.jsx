@@ -18,12 +18,16 @@ import SalesReport from './components/SalesReport'
 import CafeSettings from './components/CafeSettings'
 import ManagerStaff from './components/ManagerStaff'
 import PinLock from './components/PinLock'
+import BugReports from './components/BugReports'
+import Footer from './components/Footer'
+import LegalPage from './components/LegalPage'
 import { getStaffSession, clearStaffSession, lockTerminal, onTerminalLocked } from './lib/staffSession'
 import { ArrowIcon, LogoutIcon } from './components/icons'
 
 const TABS = {
   staff: ['orders', 'availability'],
-  manager: ['orders', 'menu', 'options', 'staff', 'reports', 'settings'],
+  manager: ['orders', 'menu', 'options', 'staff', 'reports', 'settings', 'bugs'],
+  developer: ['bugs'],
 }
 
 const IDLE_LOCK_MS = 30 * 60 * 1000 // same as the server's idle limit
@@ -163,16 +167,19 @@ function App() {
         <main className="max-w-md mx-auto px-5 py-6">
           <Login />
         </main>
+        <Footer signedIn={false} page="login" />
+        <LegalPage />
       </div>
     )
   }
 
   if (!role) return <p className="p-6 text-muted">...</p>
 
-  const isStaff = role === 'staff' || role === 'manager'
+  const isStaff = role === 'staff' || role === 'manager' || role === 'developer'
 
   if (isStaff) {
     const tabs = TABS[role] ?? []
+    const activeTab = tabs.includes(tab) ? tab : tabs[0] // each role opens on a tab it has
     const needsPin = role === 'staff' && !staffName
     if (role === 'staff' && !staffChecked) return <p className="p-6 text-muted">...</p>
 
@@ -235,9 +242,9 @@ function App() {
               <button
                 key={tabId}
                 onClick={() => setTab(tabId)}
-                aria-pressed={tab === tabId}
+                aria-pressed={activeTab === tabId}
                 className={`px-4 h-11 rounded-full border-2 font-bold text-sm ${
-                  tab === tabId
+                  activeTab === tabId
                     ? 'bg-ink text-white border-ink dark:bg-pop dark:text-ink dark:border-pop'
                     : 'bg-surface text-fg border-line'
                 }`}
@@ -248,14 +255,17 @@ function App() {
           </nav>
           )}
 
-          {!needsPin && tab === 'orders' && <StaffDashboard />}
-          {!needsPin && tab === 'availability' && <AvailabilityPanel />}
-          {tab === 'menu' && role === 'manager' && <ManagerMenu />}
-          {tab === 'options' && role === 'manager' && <ManagerOptions />}
-          {tab === 'staff' && role === 'manager' && <ManagerStaff />}
-          {tab === 'reports' && role === 'manager' && <SalesReport />}
-          {tab === 'settings' && role === 'manager' && <CafeSettings />}
+          {!needsPin && activeTab === 'orders' && <StaffDashboard />}
+          {!needsPin && activeTab === 'availability' && <AvailabilityPanel />}
+          {activeTab === 'menu' && role === 'manager' && <ManagerMenu />}
+          {activeTab === 'options' && role === 'manager' && <ManagerOptions />}
+          {activeTab === 'staff' && role === 'manager' && <ManagerStaff />}
+          {activeTab === 'bugs' && <BugReports />}
+          {activeTab === 'reports' && role === 'manager' && <SalesReport />}
+          {activeTab === 'settings' && role === 'manager' && <CafeSettings />}
+          <Footer signedIn page={`staff:${activeTab}`} />
         </div>
+        <LegalPage />
       </div>
     )
   }
@@ -275,7 +285,9 @@ function App() {
         <div id="cart">
           <Cart cart={cart} setCart={setCart} />
         </div>
+        <Footer signedIn page="student" />
       </main>
+      <LegalPage />
 
       {cartCount > 0 && (
         <button

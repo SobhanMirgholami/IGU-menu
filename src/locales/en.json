@@ -61,7 +61,9 @@
     "paused": "⏸️ Online orders are paused right now. You can still order at the counter.",
     "placed": "Order placed!",
     "showNumber": "Show this number at the counter.",
-    "newOrder": "New order"
+    "newOrder": "New order",
+    "agree": "I accept the <terms>Terms of Use</terms> and have read the <privacy>Privacy Notice</privacy>.",
+    "mustAgree": "Please accept the Terms of Use to order."
   },
   "myOrders": {
     "title": "My orders",
@@ -104,7 +106,8 @@
     "tooSoon": "This pickup time is too soon. Please choose a later one.",
     "paused": "The café is not taking online orders right now",
     "chooseOptions": "Please choose the required options",
-    "chooseTime": "Please choose a pickup time"
+    "chooseTime": "Please choose a pickup time",
+    "acceptTerms": "Please accept the Terms of Use to order."
   },
   "staff": {
     "tabs": {
@@ -114,11 +117,14 @@
       "options": "Options",
       "staff": "Staff",
       "reports": "Reports",
-      "settings": "Settings"
+      "settings": "Settings",
+      "bugs": "Bug reports"
     },
     "role": {
       "staff": "staff",
-      "manager": "manager"
+      "manager": "manager",
+      "developer": "developer",
+      "student": "student"
     },
     "accepting": "Taking online orders",
     "paused": "Online orders paused",
@@ -316,5 +322,56 @@
       },
       "notSetUp": "Staff PINs are not set up yet. Coming soon."
     }
+  },
+  "legal": {
+    "terms": "Terms of Use",
+    "privacy": "Privacy Notice",
+    "close": "Close",
+    "contactCounter": "ask at the café counter"
+  },
+  "bugs": {
+    "open": "Report a problem",
+    "title": "Report a problem",
+    "hint": "What went wrong? What did you expect to happen?",
+    "placeholder": "e.g. The order button did nothing after I chose 12:30",
+    "auto": "We also send the page, language, and your browser/device, so you don’t have to.",
+    "send": "Send report",
+    "sending": "Sending...",
+    "cancel": "Cancel",
+    "thanks": "Thank you! The report was sent and we’ll look at it soon.",
+    "close": "Close",
+    "loading": "Loading...",
+    "none": "No reports here.",
+    "notSetUp": "Bug reports are not set up yet. Coming soon.",
+    "when": "When",
+    "where": "Where",
+    "device": "Device",
+    "notePlaceholder": "Note for yourself (optional)",
+    "save": "Save",
+    "filter": {
+      "open": "Open",
+      "all": "All"
+    },
+    "status": {
+      "new": "New",
+      "in_progress": "Working on it",
+      "fixed": "Fixed",
+      "wont_fix": "Won't fix"
+    },
+    "errors": {
+      "BUG_TOO_SHORT": "Please write at least 10 characters.",
+      "BUG_TOO_LONG": "Please keep it under 2000 characters.",
+      "BUG_LIMIT": "You’ve sent 5 reports today. Thank you! Please try again tomorrow.",
+      "notReady": "Bug reports are not set up yet. Please tell the café staff."
+    },
+    "from": "From"
+  },
+  "pwa": {
+    "install": "Install app",
+    "iosHint": "On iPhone: tap the Share button, then “Add to Home Screen”.",
+    "notifyMe": "Notify me when it’s ready",
+    "willNotify": "We’ll notify you when it’s ready.",
+    "readyTitle": "Order #{{id}} is ready! ☕",
+    "readyBody": "Show your number at the counter."
   }
 }

@@ -61,7 +61,9 @@
     "paused": "⏸️ Online siparişler şu anda durduruldu. Kasadan sipariş verebilirsiniz.",
     "placed": "Sipariş alındı!",
     "showNumber": "Bu numarayı kasada gösterin.",
-    "newOrder": "Yeni sipariş"
+    "newOrder": "Yeni sipariş",
+    "agree": "<terms>Kullanım Koşulları</terms>’nı kabul ediyorum ve <privacy>Aydınlatma Metni</privacy>’ni okudum.",
+    "mustAgree": "Sipariş vermek için Kullanım Koşulları’nı kabul etmelisin."
   },
   "myOrders": {
     "title": "Siparişlerim",
@@ -104,7 +106,8 @@
     "tooSoon": "Bu teslim saati çok yakın. Lütfen daha geç bir saat seçin.",
     "paused": "Kafe şu anda online sipariş almıyor",
     "chooseOptions": "Lütfen gerekli seçenekleri seçin",
-    "chooseTime": "Lütfen bir teslim saati seçin"
+    "chooseTime": "Lütfen bir teslim saati seçin",
+    "acceptTerms": "Sipariş vermek için Kullanım Koşulları’nı kabul etmelisin."
   },
   "staff": {
     "tabs": {
@@ -114,11 +117,14 @@
       "options": "Seçenekler",
       "staff": "Personel",
       "reports": "Raporlar",
-      "settings": "Ayarlar"
+      "settings": "Ayarlar",
+      "bugs": "Hata bildirimleri"
     },
     "role": {
       "staff": "personel",
-      "manager": "yönetici"
+      "manager": "yönetici",
+      "developer": "geliştirici",
+      "student": "öğrenci"
     },
     "accepting": "Online sipariş alınıyor",
     "paused": "Online siparişler durduruldu",
@@ -316,5 +322,56 @@
       },
       "notSetUp": "Personel PIN sistemi henüz kurulmadı. Yakında."
     }
+  },
+  "legal": {
+    "terms": "Kullanım Koşulları",
+    "privacy": "Aydınlatma Metni",
+    "close": "Kapat",
+    "contactCounter": "kafe tezgâhına sorabilirsiniz"
+  },
+  "bugs": {
+    "open": "Sorun bildir",
+    "title": "Sorun bildir",
+    "hint": "Ne oldu? Ne olmasını bekliyordun?",
+    "placeholder": "ör. 12:30’u seçtikten sonra sipariş butonu çalışmadı",
+    "auto": "Sayfa, dil ve tarayıcı/cihaz bilgisini de biz ekliyoruz, yazmana gerek yok.",
+    "send": "Gönder",
+    "sending": "Gönderiliyor...",
+    "cancel": "Vazgeç",
+    "thanks": "Teşekkürler! Bildirim gönderildi, yakında bakacağız.",
+    "close": "Kapat",
+    "loading": "Yükleniyor...",
+    "none": "Burada bildirim yok.",
+    "notSetUp": "Hata bildirimleri henüz kurulmadı. Yakında.",
+    "when": "Zaman",
+    "where": "Yer",
+    "device": "Cihaz",
+    "notePlaceholder": "Kendine not (isteğe bağlı)",
+    "save": "Kaydet",
+    "filter": {
+      "open": "Açık",
+      "all": "Tümü"
+    },
+    "status": {
+      "new": "Yeni",
+      "in_progress": "Üzerinde çalışılıyor",
+      "fixed": "Düzeltildi",
+      "wont_fix": "Yapılmayacak"
+    },
+    "errors": {
+      "BUG_TOO_SHORT": "Lütfen en az 10 karakter yaz.",
+      "BUG_TOO_LONG": "Lütfen 2000 karakteri geçme.",
+      "BUG_LIMIT": "Bugün 5 bildirim gönderdin. Teşekkürler! Lütfen yarın tekrar dene.",
+      "notReady": "Hata bildirimleri henüz kurulmadı. Lütfen kafe personeline söyle."
+    },
+    "from": "Gönderen"
+  },
+  "pwa": {
+    "install": "Uygulamayı yükle",
+    "iosHint": "iPhone’da: Paylaş butonuna dokun, sonra “Ana Ekrana Ekle”yi seç.",
+    "notifyMe": "Hazır olunca haber ver",
+    "willNotify": "Hazır olunca sana haber vereceğiz.",
+    "readyTitle": "#{{id}} siparişin hazır! ☕",
+    "readyBody": "Numaranı tezgâhta göster."
   }
 }

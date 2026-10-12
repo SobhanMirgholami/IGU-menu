@@ -8,6 +8,7 @@ const ERROR_KEYS = {
   'The café is not taking online orders right now': 'errors.paused',
   'Please choose the required options': 'errors.chooseOptions',
   'Choose a pickup time': 'errors.chooseTime',
+  'Please accept the terms of use first': 'errors.acceptTerms',
 }
 
 export function translateError(message, t) {

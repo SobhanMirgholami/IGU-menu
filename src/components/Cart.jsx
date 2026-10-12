@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { formatPrice, formatTime } from '../lib/format'
 import { pick } from '../lib/localize'
 import { translateError } from '../lib/errors'
+import { TERMS_VERSION } from '../lib/legal'
+import { askForNotifications, notificationsAllowed, notificationsSupported } from '../lib/pwa'
 import { MinusIcon, PlusIcon } from './icons'
 
 export default function Cart({ cart, setCart }) {
@@ -16,6 +18,11 @@ export default function Cart({ cart, setCart }) {
   const [slots, setSlots] = useState([])
   const [pickupAt, setPickupAt] = useState('')
   const [accepting, setAccepting] = useState(true)
+  const [termsAccepted, setTermsAccepted] = useState(null) // null = still checking
+  const [agree, setAgree] = useState(false)
+  const [notify, setNotify] = useState(() =>
+    !notificationsSupported() ? 'unsupported' : notificationsAllowed() ? 'granted' : Notification.permission
+  )
 
   async function loadSlots() {
     const [settingsResult, slotsResult] = await Promise.all([
@@ -51,6 +58,20 @@ export default function Cart({ cart, setCart }) {
     }
   }, [])
 
+  // Did this student already accept the current terms?
+  useEffect(() => {
+    supabase
+      .from('terms_acceptances')
+      .select('terms_version')
+      .eq('terms_version', TERMS_VERSION)
+      .maybeSingle()
+      .then(({ data }) => setTermsAccepted(Boolean(data)))
+  }, [])
+
+  async function enableNotifications() {
+    setNotify(await askForNotifications())
+  }
+
   const total = cart.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0)
 
   function changeQuantity(key, change) {
@@ -64,8 +85,17 @@ export default function Cart({ cart, setCart }) {
   }
 
   async function placeOrder() {
-    setLoading(true)
     setError(null)
+
+    if (!termsAccepted) {
+      if (!agree) return setError(t('cart.mustAgree'))
+      const { error } = await supabase.rpc('accept_terms', { p_version: TERMS_VERSION })
+      // PGRST202 = database/14_terms.sql not run yet: nothing to save, so just continue
+      if (error && error.code !== 'PGRST202') return setError(error.message)
+      setTermsAccepted(true)
+    }
+
+    setLoading(true)
 
     const { data, error } = await supabase.rpc('place_order', {
       p_items: cart.map((line) => ({
@@ -96,6 +126,15 @@ export default function Cart({ cart, setCart }) {
         <p className="font-semibold text-muted">{t('cart.placed')}</p>
         <p className="font-display font-extrabold text-6xl text-brand dark:text-pop my-1">#{orderId}</p>
         <p className="text-sm text-muted mb-3">{t('cart.showNumber')}</p>
+        {notify === 'default' && (
+          <button
+            onClick={enableNotifications}
+            className="h-11 px-5 mb-2 rounded-full border-2 border-ink bg-pop text-ink font-bold shadow-hard-sm"
+          >
+            🔔 {t('pwa.notifyMe')}
+          </button>
+        )}
+        {notify === 'granted' && <p className="text-sm font-semibold mb-2">🔔 {t('pwa.willNotify')}</p>}
         <button
           onClick={() => setOrderId(null)}
           className="h-11 px-5 rounded-full border-2 border-line bg-surface text-fg font-bold"
@@ -212,9 +251,32 @@ export default function Cart({ cart, setCart }) {
         <span className="font-display font-extrabold text-3xl">{formatPrice(total)}</span>
       </div>
 
+      {termsAccepted === false && (
+        <label className="flex items-start gap-3 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            checked={agree}
+            onChange={(e) => {
+              setAgree(e.target.checked)
+              setError(null)
+            }}
+            className="mt-0.5 w-5 h-5 shrink-0 accent-brand"
+          />
+          <span>
+            <Trans
+              i18nKey="cart.agree"
+              components={{
+                terms: <a href="#terms" className="font-bold underline underline-offset-2" />,
+                privacy: <a href="#privacy" className="font-bold underline underline-offset-2" />,
+              }}
+            />
+          </span>
+        </label>
+      )}
+
       <button
         onClick={placeOrder}
-        disabled={loading || !pickupAt}
+        disabled={loading || !pickupAt || termsAccepted === null}
         className="w-full h-14 rounded-2xl border-2 border-ink bg-pop text-ink font-display font-extrabold text-lg shadow-hard disabled:opacity-50 disabled:shadow-none"
       >
         {loading ? t('cart.placing') : t('cart.placeOrder')}
