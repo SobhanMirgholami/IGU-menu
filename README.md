@@ -12,6 +12,9 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![i18next](https://img.shields.io/badge/i18next-26A69A?style=for-the-badge&logo=i18next&logoColor=white)
+
+**🇹🇷 Türkçe · 🇬🇧 English · 🇸🇦 العربية**
 
 </div>
 
@@ -21,7 +24,7 @@
 
 Between classes at Istanbul Gelişim University, the café line gets *long*. Everyone wants coffee at the same time, and half the break disappears waiting.
 
-So I decided to build a fix: students order from their phones, the café gets orders instantly, and nobody has to stand in line. My goal is to see it running in our real café, and if not, it's still the most complete project I've built so far. 🚀
+So I decided to build a fix: students order from their phones, pick a pickup time, and the café gets the order instantly. Nobody has to stand in line. My goal is to see it running in our real café, and if not, it's still the most complete project I've built so far. 🚀
 
 ---
 
@@ -29,22 +32,28 @@ So I decided to build a fix: students order from their phones, the café gets or
 
 ### 🎓 For students
 - 🔐 Sign in with a one-time email code, no passwords to remember
-- 📋 Browse the menu and build a cart
+- 🎓 Only university emails can place orders
+- 📋 Browse the menu with allergen and diet tags (🌾 gluten, 🥛 milk, 🌱 vegan…)
+- ☕ Customize drinks: size, milk type, extra shot, with live price updates
+- ⏰ Choose a pickup time, and see which slots are almost full
 - 📝 Add a note to your order
 - 📡 Watch your order status live: **received → being prepared → ready**
 - 📳 Your phone vibrates when your order is ready
+- 🌍 Use the app in Turkish, English, or Arabic, with full right-to-left layout
 
 ### 👨‍🍳 For staff
-- ⚡ Live dashboard, new orders appear instantly
+- ⚡ Live dashboard, orders sorted by pickup time
 - 🔄 One tap to move orders: preparing → ready → picked up
 - 💵 Mark orders as paid at the counter
-- 🧾 Print 80mm thermal receipts in Turkish
+- 🧾 Print 80mm thermal receipts in Turkish, with options and pickup time
 - 🚫 Mark items sold out in one tap
+- ⏸️ Pause online orders when the kitchen is overwhelmed, students see it instantly
 
 ### 📊 For the café manager
 - 🍰 Add menu items in Turkish, English, and Arabic
 - ✏️ Edit prices and categories
 - 🗄️ Archive old items without losing order history
+- ⚙️ Set opening hours, slot length, orders per slot, and preparation time
 - 📈 Sales reports by date and hour: income, orders, average order, cancellations
 - 🏆 Best-selling items and busiest hours
 - 📥 Export reports to Excel
@@ -57,13 +66,15 @@ I treated security as a core feature, not an afterthought:
 
 - 🛡️ **Row Level Security** on every table: students only ever see their own orders
 - 👥 **Role-based access:** student, staff, and manager each see only what their job needs
-- 💰 **Server-side pricing:** totals are calculated in the database, so nobody can fake a price
+- 💰 **Server-side pricing:** totals and option prices are calculated in the database, so nobody can fake a price
 - 🚪 **One door for orders:** a validated database function is the only way to create one
+- ✅ **Option rules in the database:** no two sizes, no missing required choices, no oat milk on a croissant
+- 🎓 **University email check** inside the order function, so it can't be bypassed
 - 🚫 **Spam protection:** max 2 active orders per student, plus item and note limits
-- 🏁 **Race condition protection:** per-student locks stop duplicate orders from double-taps
+- 🏁 **Race condition protection:** per-student locks stop duplicate orders, per-slot locks stop overbooking
 - 📜 **Business rules in the database:** no pickup without payment, paid orders can't be cancelled
 - 🕵️ **Full order history:** every change is logged with who, when, and which shift
-- 🧊 **Frozen prices:** each order saves its prices, so menu changes never rewrite history
+- 🧊 **Frozen prices:** each order saves its prices and options, so menu changes never rewrite history
 - 🗃️ **Nothing is deleted:** menu items are archived, so old orders and reports stay correct
 
 ---
@@ -77,6 +88,7 @@ I treated security as a core feature, not an afterthought:
 | 🗄️ Database | PostgreSQL (Supabase) |
 | 🔑 Auth | Supabase Auth with email codes |
 | 📡 Live updates | Supabase Realtime |
+| 🌍 Languages | i18next + react-i18next, RTL support |
 | 🖨️ Printing | Browser print + 80mm print CSS |
 
 ---
@@ -90,17 +102,28 @@ I treated security as a core feature, not an afterthought:
 src/
 ├── components/
 │   ├── Login.jsx              🔐 Email code sign-in
-│   ├── Menu.jsx               📋 Menu with add buttons
-│   ├── Cart.jsx               🛒 Cart and ordering
+│   ├── Menu.jsx               📋 Menu with allergens and options
+│   ├── OptionPicker.jsx       ☕ Size, milk, and extras picker
+│   ├── Cart.jsx               🛒 Cart, pickup time, and ordering
 │   ├── MyOrders.jsx           📡 Live order status
+│   ├── LanguageSwitcher.jsx   🌍 TR / EN / عربي
 │   ├── StaffDashboard.jsx     👨‍🍳 Staff order screen
+│   ├── OrderingToggle.jsx     ⏸️ Pause and resume orders
 │   ├── Receipt.jsx            🧾 Printable receipt
 │   ├── AvailabilityPanel.jsx  🚫 Staff sold-out toggles
 │   ├── ManagerMenu.jsx        🍰 Manager menu editor
-│   └── SalesReport.jsx        📊 Sales reports
-└── lib/
-    ├── supabase.js            🔌 Supabase client
-    └── format.js              💰 Price formatting
+│   ├── SalesReport.jsx        📊 Sales reports
+│   └── CafeSettings.jsx       ⚙️ Hours and slot settings
+├── locales/
+│   ├── tr.json                🇹🇷 Turkish
+│   ├── en.json                🇬🇧 English
+│   └── ar.json                🇸🇦 Arabic
+├── lib/
+│   ├── supabase.js            🔌 Supabase client
+│   ├── format.js              💰 Price and time formatting
+│   ├── localize.js            🌍 Picks the right language from the database
+│   └── errors.js              ⚠️ Translates database errors
+└── i18n.js                    🌍 Language setup and RTL
 
 database/
 ├── 01_menu.sql                Menu tables + sample data
@@ -109,7 +132,10 @@ database/
 ├── 04_order_events.sql        Order history with shifts
 ├── 05_payments.sql            Payment and pickup rules
 ├── 06_menu_management.sql     Manager editing, archiving, sold out
-└── 07_sales_report.sql        Sales report function
+├── 07_sales_report.sql        Sales report function
+├── 08_university_email.sql    University-email-only ordering
+├── 09_item_options.sql        Options, allergens, option pricing
+└── 10_pickup_slots.sql        Pickup slots, capacity, pause orders
 
 assets/
 └── banner.svg                 🎨 README banner
@@ -128,10 +154,15 @@ npm install
 
 **2. Set up Supabase**
 - Create a project at [supabase.com](https://supabase.com)
-- Run the files in `database/` **in order** (01 → 07) in the SQL Editor
+- Run the files in `database/` **in order** (01 → 10) in the SQL Editor
 - Connect an SMTP provider and add `{{ .Token }}` to the **Magic Link** and **Confirm signup** email templates
 
-**3. Add your environment variables**
+**3. Allow your university's email domain**
+```sql
+insert into allowed_email_domains (domain) values ('your-university-domain');
+```
+
+**4. Add your environment variables**
 
 Copy `.env.example` to `.env`:
 ```
@@ -140,12 +171,12 @@ VITE_SUPABASE_ANON_KEY=
 ```
 > ⚠️ Use the **publishable** key only. The secret key never goes in the frontend, and `.env` never goes on GitHub.
 
-**4. Run it**
+**5. Run it**
 ```bash
 npm run dev
 ```
 
-**5. Assign roles**
+**6. Assign roles**
 
 Sign in once with the person's email, then run:
 ```sql
@@ -168,15 +199,18 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] Manager menu editor: add items, edit prices, archive
 - [x] Staff sold-out toggle
 - [x] 📊 Sales reports by date and hour, with Excel export
+- [x] 🎓 University-email-only ordering
+- [x] ☕ Item options (size, milk, extra shot) and allergen tags
+- [x] ⏰ Pickup time slots and "pause orders" for rush hours
+- [x] ⚙️ Café settings for the manager
+- [x] 🌍 Turkish / English / Arabic with right-to-left support
 
 ### 🚧 In progress
-- [ ] 🎓 University-email-only sign-in
+- [ ] 🌙 Dark and light themes
 
 ### 📌 Planned
-- [ ] ☕ Item options (size, milk, extra shot) and allergen tags
-- [ ] ⏰ Pickup time slots and "pause orders" for rush hours
-- [ ] 🌍 Turkish / English / Arabic with right-to-left support
-- [ ] 🌙 Dark and light themes
+- [ ] 🇹🇷 Turkish staff and manager screens
+- [ ] 🛠️ Manager screen for item options
 - [ ] 🔢 Staff PIN system for shared terminals
 - [ ] 🐞 Bug report form and developer dashboard
 - [ ] 📜 Terms of use and KVKK privacy notice
@@ -187,6 +221,7 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [ ] 💳 Online payment (iyzico / PayTR)
 - [ ] ⭐ Loyalty stamps and reorder favorites
 - [ ] 📺 Kitchen display screen
+- [ ] 🇮🇷 Persian language
 
 ---
 
@@ -194,10 +229,6 @@ Use `'manager'` instead of `'staff'` for the café manager.
 
 Hi, I'm **Sobhan Mirgholami**, a Computer Engineering student at **Istanbul Gelişim University**. I love programming, design, and solving real problems I see around me. This project started with a long coffee line. ☕
 
-<!-- Add your links here when ready -->
-<!-- [LinkedIn](https://linkedin.com/in/your-profile) · [GitHub](https://github.com/your-username) -->
-
----
 
 <div align="center">
 
