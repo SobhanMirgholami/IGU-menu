@@ -225,6 +225,8 @@ Use `'manager'` instead of `'staff'` for the café manager.
 
 ---
 
+### 🔗 [Live demo](https://igu-menu-iqcg.vercel.app)
+
 ## 👨‍💻 About me
 
 Hi, I'm **Sobhan Mirgholami**, a Computer Engineering student at **Istanbul Gelişim University**. I love programming, design, and solving real problems I see around me. This project started with a long coffee line. ☕
