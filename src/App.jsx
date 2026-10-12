@@ -3,6 +3,7 @@ import { supabase } from './lib/supabase'
 import Login from './components/Login'
 import Menu from './components/Menu'
 import Cart from './components/Cart'
+import MyOrders from './components/MyOrders'
 import StaffDashboard from './components/StaffDashboard'
 
 function App() {
@@ -83,6 +84,7 @@ function App() {
               <StaffDashboard />
             ) : (
               <>
+                <MyOrders />
                 <Menu onAdd={addToCart} />
                 <Cart cart={cart} setCart={setCart} />
               </>
