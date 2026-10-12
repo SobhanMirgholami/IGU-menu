@@ -13,8 +13,11 @@
 ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![i18next](https://img.shields.io/badge/i18next-26A69A?style=for-the-badge&logo=i18next&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
-**🇹🇷 Türkçe · 🇬🇧 English · 🇸🇦 العربية**
+**🇹🇷 Türkçe · 🇬🇧 English · 🇸🇦 العربية · ☀️ Light · 🌙 Dark**
+
+### 🔗 [Try the live demo](https://igu-menu-iqcg.vercel.app)
 
 </div>
 
@@ -28,18 +31,32 @@ So I decided to build a fix: students order from their phones, pick a pickup tim
 
 ---
 
+## 🎨 Design
+
+I designed the look myself before writing the code: **bold and playful, in the university's blue**.
+
+- 💙 University blue with a sunny yellow accent
+- 🧩 Thick outlines, "sticker" shadows, and tilted labels for a fun, hand-made feel
+- 🔤 **Bricolage Grotesque** for headings, **Figtree** for text, **Noto Sans Arabic** for Arabic
+- 🌙 Light and dark themes built on semantic color tokens, so every screen switches at once
+- 🌀 The theme switch paints the new colors in a growing circle from the button
+- ♿ Respects "reduce motion", large touch targets, and screen reader labels
+
+---
+
 ## ✨ Features
 
 ### 🎓 For students
 - 🔐 Sign in with a one-time email code, no passwords to remember
 - 🎓 Only university emails can place orders
-- 📋 Browse the menu with allergen and diet tags (🌾 gluten, 🥛 milk, 🌱 vegan…)
+- 📋 Browse the menu by category, with allergen and diet tags (🌾 gluten, 🥛 milk, 🌱 vegan…)
 - ☕ Customize drinks: size, milk type, extra shot, with live price updates
-- ⏰ Choose a pickup time, and see which slots are almost full
+- ⏰ Pick a pickup time, and see which slots are almost full
 - 📝 Add a note to your order
 - 📡 Watch your order status live: **received → being prepared → ready**
 - 📳 Your phone vibrates when your order is ready
-- 🌍 Use the app in Turkish, English, or Arabic, with full right-to-left layout
+- 🌍 Turkish, English, or Arabic, with a full right-to-left layout
+- 🌙 Light and dark mode that follows your phone, or your own choice
 
 ### 👨‍🍳 For staff
 - ⚡ Live dashboard, orders sorted by pickup time
@@ -48,6 +65,7 @@ So I decided to build a fix: students order from their phones, pick a pickup tim
 - 🧾 Print 80mm thermal receipts in Turkish, with options and pickup time
 - 🚫 Mark items sold out in one tap
 - ⏸️ Pause online orders when the kitchen is overwhelmed, students see it instantly
+- 🌍 Staff screens in all three languages
 
 ### 📊 For the café manager
 - 🍰 Add menu items in Turkish, English, and Arabic
@@ -84,12 +102,14 @@ I treated security as a core feature, not an afterthought:
 | | Technology |
 |---|---|
 | ⚛️ Frontend | React + Vite |
-| 🎨 Styling | Tailwind CSS |
+| 🎨 Styling | Tailwind CSS v4 with design tokens |
 | 🗄️ Database | PostgreSQL (Supabase) |
 | 🔑 Auth | Supabase Auth with email codes |
 | 📡 Live updates | Supabase Realtime |
 | 🌍 Languages | i18next + react-i18next, RTL support |
+| 🌙 Themes | CSS variables + View Transitions API |
 | 🖨️ Printing | Browser print + 80mm print CSS |
+| 🚀 Hosting | Vercel, auto-deploy on every push |
 
 ---
 
@@ -101,12 +121,16 @@ I treated security as a core feature, not an afterthought:
 ```
 src/
 ├── components/
+│   ├── Hero.jsx               💙 Blue header with greeting
+│   ├── PickupBanner.jsx       ⏰ Next free pickup time
 │   ├── Login.jsx              🔐 Email code sign-in
-│   ├── Menu.jsx               📋 Menu with allergens and options
+│   ├── Menu.jsx               📋 Menu with categories and allergens
 │   ├── OptionPicker.jsx       ☕ Size, milk, and extras picker
 │   ├── Cart.jsx               🛒 Cart, pickup time, and ordering
 │   ├── MyOrders.jsx           📡 Live order status
-│   ├── LanguageSwitcher.jsx   🌍 TR / EN / عربي
+│   ├── LanguageSwitcher.jsx   🌍 Language dropdown
+│   ├── ThemeToggle.jsx        🌙 Animated light / dark switch
+│   ├── icons.jsx              ✏️ Hand-drawn SVG icons
 │   ├── StaffDashboard.jsx     👨‍🍳 Staff order screen
 │   ├── OrderingToggle.jsx     ⏸️ Pause and resume orders
 │   ├── Receipt.jsx            🧾 Printable receipt
@@ -123,7 +147,9 @@ src/
 │   ├── format.js              💰 Price and time formatting
 │   ├── localize.js            🌍 Picks the right language from the database
 │   └── errors.js              ⚠️ Translates database errors
-└── i18n.js                    🌍 Language setup and RTL
+├── i18n.js                    🌍 Language setup and RTL
+├── theme.js                   🌙 Theme logic
+└── index.css                  🎨 Design tokens and themes
 
 database/
 ├── 01_menu.sql                Menu tables + sample data
@@ -138,8 +164,8 @@ database/
 └── 10_pickup_slots.sql        Pickup slots, capacity, pause orders
 
 assets/
-assets/
-└── banner1.svg                🎨 README banner```
+└── banner1.svg                🎨 README banner
+```
 
 </details>
 
@@ -204,18 +230,20 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] ⏰ Pickup time slots and "pause orders" for rush hours
 - [x] ⚙️ Café settings for the manager
 - [x] 🌍 Turkish / English / Arabic with right-to-left support
+- [x] 🌙 Dark and light themes with an animated switch
+- [x] 🎨 New bold & playful design for students and staff
+- [x] 🚀 Live on Vercel
 
 ### 🚧 In progress
-- [ ] 🌙 Dark and light themes
+- [ ] 🌍 Translating the manager screens (menu editor, reports, settings)
+- [ ] 🎨 New design for the order-ready screen
 
 ### 📌 Planned
-- [ ] 🇹🇷 Turkish staff and manager screens
 - [ ] 🛠️ Manager screen for item options
 - [ ] 🔢 Staff PIN system for shared terminals
 - [ ] 🐞 Bug report form and developer dashboard
 - [ ] 📜 Terms of use and KVKK privacy notice
 - [ ] 📱 Installable app with "order ready" notifications
-- [ ] 🎨 Full UI redesign
 
 ### 🔮 Future ideas
 - [ ] 💳 Online payment (iyzico / PayTR)
@@ -225,12 +253,14 @@ Use `'manager'` instead of `'staff'` for the café manager.
 
 ---
 
-### 🔗 [Live demo](https://igu-menu-iqcg.vercel.app)
-
 ## 👨‍💻 About me
 
 Hi, I'm **Sobhan Mirgholami**, a Computer Engineering student at **Istanbul Gelişim University**. I love programming, design, and solving real problems I see around me. This project started with a long coffee line. ☕
 
+<!-- Add your links here when ready -->
+<!-- [LinkedIn](https://linkedin.com/in/your-profile) · [GitHub](https://github.com/your-username) -->
+
+---
 
 <div align="center">
 
