@@ -71,6 +71,14 @@
       "preparing": "Hazırlanıyor",
       "ready": "Teslime hazır!",
       "cancelled": "İptal edildi"
+    },
+    "readyTitle": "Siparişin <pop>hazır!</pop>",
+    "orderNumber": "Sipariş numarası",
+    "showCounter": "Bu numarayı kasada göster",
+    "steps": {
+      "received": "Alındı",
+      "preparing": "Hazırlanıyor",
+      "ready": "Hazır"
     }
   },
   "allergens": {
@@ -138,5 +146,66 @@
     "ordered": "Sipariş {{time}}",
     "available": "Mevcut",
     "soldOut": "Tükendi"
+  },
+  "manager": {
+    "addItem": "Yeni ürün ekle",
+    "editItem": "#{{id}} numaralı ürünü düzenle",
+    "nameTr": "Ad (Türkçe)",
+    "nameEn": "Ad (İngilizce)",
+    "nameAr": "Ad (Arapça)",
+    "price": "Fiyat (TL)",
+    "category": "Kategori",
+    "save": "Değişiklikleri kaydet",
+    "add": "Ürün ekle",
+    "saving": "Kaydediliyor...",
+    "cancel": "İptal",
+    "edit": "Düzenle",
+    "available": "Mevcut",
+    "soldOut": "Tükendi",
+    "archive": "Arşivle",
+    "restore": "Geri al",
+    "errors": {
+      "names": "Adı üç dilde de girin",
+      "price": "Geçerli bir fiyat girin",
+      "category": "Bir kategori seçin",
+      "permission": "Kaydedilmedi. Yetkiniz olmayabilir.",
+      "translate": "Çeviri yapılamadı. Lütfen adları kendiniz yazın."
+    },
+    "report": {
+      "today": "Bugün",
+      "last7": "Son 7 gün",
+      "month": "Bu ay",
+      "from": "Başlangıç",
+      "to": "Bitiş",
+      "startHour": "Başlangıç saati",
+      "endHour": "Bitiş saati",
+      "show": "Raporu göster",
+      "loading": "Yükleniyor...",
+      "income": "Gelir",
+      "orders": "Siparişler",
+      "average": "Ortalama sipariş",
+      "cancelled": "İptal edilen",
+      "itemsSold": "Satılan ürünler",
+      "export": "Excel'e aktar",
+      "noSales": "Bu dönemde satış yok.",
+      "item": "Ürün",
+      "qty": "Adet",
+      "busiest": "En yoğun saatler",
+      "report": "Rapor"
+    },
+    "settings": {
+      "title": "Kafe ayarları",
+      "opens": "Açılış",
+      "closes": "Kapanış",
+      "slot": "Zaman aralığı (dakika)",
+      "perSlot": "Aralık başına sipariş",
+      "lead": "En az hazırlık süresi (dakika)",
+      "save": "Ayarları kaydet",
+      "saved": "Ayarlar kaydedildi.",
+      "loading": "Yükleniyor..."
+    },
+    "translate": "İngilizce ve Arapçaya çevir",
+    "translating": "Çevriliyor...",
+    "translateHint": "Otomatik çeviri. Kaydetmeden önce kontrol edin."
   }
 }

@@ -54,6 +54,7 @@ I designed the look myself before writing the code: **bold and playful, in the u
 - ⏰ Pick a pickup time, and see which slots are almost full
 - 📝 Add a note to your order
 - 📡 Watch your order status live: **received → being prepared → ready**
+- 🎫 A big "order ready" ticket with your number, pickup time, and progress steps
 - 📳 Your phone vibrates when your order is ready
 - 🌍 Turkish, English, or Arabic, with a full right-to-left layout
 - 🌙 Light and dark mode that follows your phone, or your own choice
@@ -75,6 +76,7 @@ I designed the look myself before writing the code: **bold and playful, in the u
 - 📈 Sales reports by date and hour: income, orders, average order, cancellations
 - 🏆 Best-selling items and busiest hours
 - 📥 Export reports to Excel
+- 🌍 Manager screens in all three languages
 
 ---
 
@@ -233,13 +235,13 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] 🌙 Dark and light themes with an animated switch
 - [x] 🎨 New bold & playful design for students and staff
 - [x] 🚀 Live on Vercel
+- [x] 🌍 Manager screens in all three languages
+- [x] 🎫 "Order ready" ticket with a live progress tracker
 
 ### 🚧 In progress
-- [ ] 🌍 Translating the manager screens (menu editor, reports, settings)
-- [ ] 🎨 New design for the order-ready screen
+- [ ] 🛠️ Manager screen for item options
 
 ### 📌 Planned
-- [ ] 🛠️ Manager screen for item options
 - [ ] 🔢 Staff PIN system for shared terminals
 - [ ] 🐞 Bug report form and developer dashboard
 - [ ] 📜 Terms of use and KVKK privacy notice

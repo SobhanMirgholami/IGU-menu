@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { formatPrice } from '../lib/format'
 
@@ -15,16 +16,20 @@ const daysAgo = (days) => {
 const firstOfMonth = () => today().slice(0, 8) + '01'
 
 const PRESETS = [
-  { label: 'Today', from: today, to: today },
-  { label: 'Last 7 days', from: () => daysAgo(6), to: today },
-  { label: 'This month', from: firstOfMonth, to: today },
+  { key: 'today', from: today, to: today },
+  { key: 'last7', from: () => daysAgo(6), to: today },
+  { key: 'month', from: firstOfMonth, to: today },
 ]
 
 const HOURS = Array.from({ length: 25 }, (_, i) => i)
 
 const pad = (hour) => String(hour).padStart(2, '0') + ':00'
 
+const inputClass =
+  'w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg focus:outline-none focus:border-brand dark:focus:border-pop'
+
 export default function SalesReport() {
+  const { t } = useTranslation()
   const [from, setFrom] = useState(today())
   const [to, setTo] = useState(today())
   const [hourFrom, setHourFrom] = useState(0)
@@ -61,14 +66,15 @@ export default function SalesReport() {
   }
 
   function exportCsv() {
+    const r = (key) => t(`manager.report.${key}`)
     const rows = [
-      ['Report', `${from} to ${to}, ${pad(hourFrom)}-${pad(hourTo)}`],
-      ['Income', report.income],
-      ['Orders', report.orders],
-      ['Average order', report.average],
-      ['Cancelled', report.cancelled],
+      [r('report'), `${from} – ${to}, ${pad(hourFrom)}-${pad(hourTo)}`],
+      [r('income'), report.income],
+      [r('orders'), report.orders],
+      [r('average'), report.average],
+      [r('cancelled'), report.cancelled],
       [],
-      ['Item', 'Quantity', 'Income'],
+      [r('item'), r('qty'), r('income')],
       ...report.items.map((item) => [item.name, item.quantity, item.income]),
     ]
 
@@ -76,7 +82,7 @@ export default function SalesReport() {
       .map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(';'))
       .join('\n')
 
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' })
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
     link.download = `sales-${from}-to-${to}.csv`
@@ -87,40 +93,40 @@ export default function SalesReport() {
   const maxHourOrders = Math.max(1, ...(report?.by_hour ?? []).map((h) => h.orders))
 
   return (
-    <div className="space-y-6">
-      <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4 space-y-3">
+    <div className="flex flex-col gap-6">
+      <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4 flex flex-col gap-4">
         <div className="flex flex-wrap gap-2">
           {PRESETS.map((preset) => (
             <button
-              key={preset.label}
+              key={preset.key}
               onClick={() => applyPreset(preset)}
-              className="h-10 px-3 rounded-full border-2 border-line font-semibold text-sm"
+              className="h-10 px-4 rounded-full border-2 border-line bg-surface font-bold text-sm"
             >
-              {preset.label}
+              {t(`manager.report.${preset.key}`)}
             </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <label className="text-sm">
-            From
-            <input type="date" value={from} max={to} onChange={(e) => setFrom(e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted" />
+        <div className="grid grid-cols-2 gap-3">
+          <label className="flex flex-col gap-1 text-sm font-semibold">
+            {t('manager.report.from')}
+            <input type="date" dir="ltr" value={from} max={to} onChange={(e) => setFrom(e.target.value)} className={inputClass} />
           </label>
-          <label className="text-sm">
-            To
-            <input type="date" value={to} min={from} onChange={(e) => setTo(e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted" />
+          <label className="flex flex-col gap-1 text-sm font-semibold">
+            {t('manager.report.to')}
+            <input type="date" dir="ltr" value={to} min={from} onChange={(e) => setTo(e.target.value)} className={inputClass} />
           </label>
-          <label className="text-sm">
-            Start hour
-            <select value={hourFrom} onChange={(e) => setHourFrom(e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted">
+          <label className="flex flex-col gap-1 text-sm font-semibold">
+            {t('manager.report.startHour')}
+            <select value={hourFrom} onChange={(e) => setHourFrom(e.target.value)} className={inputClass}>
               {HOURS.slice(0, 24).map((h) => (
                 <option key={h} value={h}>{pad(h)}</option>
               ))}
             </select>
           </label>
-          <label className="text-sm">
-            End hour
-            <select value={hourTo} onChange={(e) => setHourTo(e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted">
+          <label className="flex flex-col gap-1 text-sm font-semibold">
+            {t('manager.report.endHour')}
+            <select value={hourTo} onChange={(e) => setHourTo(e.target.value)} className={inputClass}>
               {HOURS.slice(1).map((h) => (
                 <option key={h} value={h}>{pad(h)}</option>
               ))}
@@ -133,46 +139,49 @@ export default function SalesReport() {
           disabled={loading}
           className="w-full h-12 bg-brand text-white border-2 border-ink rounded-2xl font-bold shadow-hard-sm disabled:opacity-50"
         >
-          {loading ? 'Loading...' : 'Show report'}
+          {loading ? t('manager.report.loading') : t('manager.report.show')}
         </button>
 
-        {error && <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>}
+        {error && <p className="text-sm font-semibold text-red-600 dark:text-red-400">{error}</p>}
       </div>
 
       {report && (
         <>
-          <div className="grid grid-cols-2 gap-3">
-            <Stat label="Income" value={formatPrice(report.income)} />
-            <Stat label="Orders" value={report.orders} />
-            <Stat label="Average order" value={formatPrice(report.average)} />
-            <Stat label="Cancelled" value={report.cancelled} />
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <Stat label={t('manager.report.income')} value={formatPrice(report.income)} />
+            <Stat label={t('manager.report.orders')} value={report.orders} />
+            <Stat label={t('manager.report.average')} value={formatPrice(report.average)} />
+            <Stat label={t('manager.report.cancelled')} value={report.cancelled} />
           </div>
 
           <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="font-display font-bold text-lg">Items sold</h3>
+            <div className="flex justify-between items-center gap-3 mb-3">
+              <h3 className="font-display font-extrabold text-xl">{t('manager.report.itemsSold')}</h3>
               {report.items.length > 0 && (
-                <button onClick={exportCsv} className="text-sm h-10 px-3 rounded-full border-2 border-line font-semibold">
-                  Export to Excel
+                <button
+                  onClick={exportCsv}
+                  className="h-10 px-4 rounded-full border-2 border-ink bg-mint text-ink font-bold text-sm"
+                >
+                  {t('manager.report.export')}
                 </button>
               )}
             </div>
 
             {report.items.length === 0 ? (
-              <p className="text-sm text-muted">No sales in this period.</p>
+              <p className="text-sm text-muted">{t('manager.report.noSales')}</p>
             ) : (
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-start text-muted">
-                    <th className="py-1">Item</th>
-                    <th className="py-1 text-end">Qty</th>
-                    <th className="py-1 text-end">Income</th>
+                  <tr className="text-muted">
+                    <th className="py-1 text-start font-semibold">{t('manager.report.item')}</th>
+                    <th className="py-1 text-end font-semibold">{t('manager.report.qty')}</th>
+                    <th className="py-1 text-end font-semibold">{t('manager.report.income')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {report.items.map((item) => (
                     <tr key={item.name} className="border-t border-soft-line">
-                      <td className="py-2">{item.name}</td>
+                      <td className="py-2 font-semibold">{item.name}</td>
                       <td className="py-2 text-end">{item.quantity}</td>
                       <td className="py-2 text-end">{formatPrice(item.income)}</td>
                     </tr>
@@ -184,18 +193,18 @@ export default function SalesReport() {
 
           {report.by_hour.length > 0 && (
             <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4">
-              <h3 className="font-display font-bold text-lg mb-3">Busiest hours</h3>
-              <div className="space-y-1">
+              <h3 className="font-display font-extrabold text-xl mb-3">{t('manager.report.busiest')}</h3>
+              <div className="flex flex-col gap-1.5">
                 {report.by_hour.map((h) => (
                   <div key={h.hour} className="flex items-center gap-2 text-sm">
-                    <span className="w-12 text-muted">{pad(h.hour)}</span>
-                    <div className="flex-1 bg-chip rounded">
+                    <span dir="ltr" className="w-12 text-muted">{pad(h.hour)}</span>
+                    <div className="flex-1 bg-chip rounded-md">
                       <div
-                        className="bg-brand dark:bg-pop h-5 rounded"
+                        className="bg-brand dark:bg-pop h-5 rounded-md"
                         style={{ width: `${(h.orders / maxHourOrders) * 100}%` }}
                       />
                     </div>
-                    <span className="w-8 text-end">{h.orders}</span>
+                    <span className="w-8 text-end font-bold">{h.orders}</span>
                   </div>
                 ))}
               </div>
@@ -210,7 +219,7 @@ export default function SalesReport() {
 function Stat({ label, value }) {
   return (
     <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4">
-      <p className="text-xs text-muted">{label}</p>
+      <p className="text-xs font-semibold text-muted">{label}</p>
       <p className="font-display text-2xl font-extrabold text-brand dark:text-pop">{value}</p>
     </div>
   )

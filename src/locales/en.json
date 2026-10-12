@@ -71,6 +71,14 @@
       "preparing": "Being prepared",
       "ready": "Ready for pickup!",
       "cancelled": "Cancelled"
+    },
+    "readyTitle": "Your order is <pop>ready!</pop>",
+    "orderNumber": "Order number",
+    "showCounter": "Show this number at the counter",
+    "steps": {
+      "received": "Received",
+      "preparing": "Preparing",
+      "ready": "Ready"
     }
   },
   "allergens": {
@@ -138,5 +146,66 @@
     "ordered": "Ordered {{time}}",
     "available": "Available",
     "soldOut": "Sold out"
+  },
+  "manager": {
+    "addItem": "Add new item",
+    "editItem": "Edit item #{{id}}",
+    "nameTr": "Name (Turkish)",
+    "nameEn": "Name (English)",
+    "nameAr": "Name (Arabic)",
+    "price": "Price (TL)",
+    "category": "Category",
+    "save": "Save changes",
+    "add": "Add item",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "available": "Available",
+    "soldOut": "Sold out",
+    "archive": "Archive",
+    "restore": "Restore",
+    "errors": {
+      "names": "Enter the name in all three languages",
+      "price": "Enter a valid price",
+      "category": "Choose a category",
+      "permission": "Not saved. You may not have permission.",
+      "translate": "Couldn't translate. Please type the names yourself."
+    },
+    "report": {
+      "today": "Today",
+      "last7": "Last 7 days",
+      "month": "This month",
+      "from": "From",
+      "to": "To",
+      "startHour": "Start hour",
+      "endHour": "End hour",
+      "show": "Show report",
+      "loading": "Loading...",
+      "income": "Income",
+      "orders": "Orders",
+      "average": "Average order",
+      "cancelled": "Cancelled",
+      "itemsSold": "Items sold",
+      "export": "Export to Excel",
+      "noSales": "No sales in this period.",
+      "item": "Item",
+      "qty": "Qty",
+      "busiest": "Busiest hours",
+      "report": "Report"
+    },
+    "settings": {
+      "title": "Café settings",
+      "opens": "Opens at",
+      "closes": "Closes at",
+      "slot": "Slot length (minutes)",
+      "perSlot": "Orders per slot",
+      "lead": "Minimum preparation time (minutes)",
+      "save": "Save settings",
+      "saved": "Settings saved.",
+      "loading": "Loading..."
+    },
+    "translate": "Translate to English & Arabic",
+    "translating": "Translating...",
+    "translateHint": "Machine translation. Check it before saving."
   }
 }
