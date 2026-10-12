@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { supabase } from "../lib/supabase";
 
 export default function Login() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [step, setStep] = useState("email");
@@ -47,48 +49,55 @@ export default function Login() {
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h2 className="text-xl font-semibold text-amber-800 mb-4">Sign in</h2>
+      <h2 className="text-xl font-semibold text-amber-800 mb-4">
+        {t("login.title")}
+      </h2>
 
       {step === "email" ? (
         <form onSubmit={sendCode} className="space-y-3">
           <input
             type="email"
+            dir="ltr"
             required
-            placeholder="Your university email"
+            placeholder={t("login.emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full border rounded-lg p-3"
           />
           {domains.length > 0 && (
             <p className="text-xs text-gray-500">
-              Students: use your {domains.map((d) => `@${d}`).join(" or ")}{" "}
-              email to order.
+              {t("login.studentHint", {
+                domains: domains.map((d) => `@${d}`).join(t("login.or")),
+              })}
             </p>
           )}
           <button
             disabled={loading}
             className="w-full bg-amber-700 text-white rounded-lg p-3 disabled:opacity-50"
           >
-            {loading ? "Sending..." : "Send code"}
+            {loading ? t("login.sending") : t("login.sendCode")}
           </button>
         </form>
       ) : (
         <form onSubmit={verifyCode} className="space-y-3">
           <p className="text-sm text-gray-600">
-            We sent a code to {cleanEmail}
+            {t("login.codeSent", { email: cleanEmail })}
           </p>
           <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
             <span className="text-lg leading-none">📬</span>
             <p className="text-sm text-amber-900">
-              Can't find the code? Check your{" "}
-              <span className="font-semibold">spam</span> folder.
+              <Trans
+                i18nKey="login.spamHint"
+                components={{ bold: <span className="font-semibold" /> }}
+              />
             </p>
           </div>
           <input
             inputMode="numeric"
+            dir="ltr"
             autoComplete="one-time-code"
             required
-            placeholder="Enter the code"
+            placeholder={t("login.codePlaceholder")}
             value={code}
             onChange={(e) => setCode(e.target.value)}
             className="w-full border rounded-lg p-3 tracking-widest text-center"
@@ -97,7 +106,7 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-amber-700 text-white rounded-lg p-3 disabled:opacity-50"
           >
-            {loading ? "Checking..." : "Sign in"}
+            {loading ? t("login.checking") : t("login.signIn")}
           </button>
           <button
             type="button"
@@ -108,7 +117,7 @@ export default function Login() {
             }}
             className="w-full text-sm text-gray-500"
           >
-            Use a different email
+            {t("login.differentEmail")}
           </button>
         </form>
       )}

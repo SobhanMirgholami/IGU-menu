@@ -1,0 +1,1 @@
+export const pick = (value, lang) => value?.[lang] ?? value?.tr ?? ''

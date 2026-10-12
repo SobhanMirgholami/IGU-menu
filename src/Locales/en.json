@@ -1,0 +1,85 @@
+{
+  "app": {
+    "signOut": "Sign out",
+    "signedInAs": "Signed in as {{email}}"
+  },
+  "login": {
+    "title": "Sign in",
+    "emailPlaceholder": "Your university email",
+    "studentHint": "Students: use your {{domains}} email to order.",
+    "or": " or ",
+    "sendCode": "Send code",
+    "sending": "Sending...",
+    "codeSent": "We sent a code to {{email}}",
+    "spamHint": "Can't find the code? Check your <bold>spam</bold> folder.",
+    "codePlaceholder": "Enter the code",
+    "signIn": "Sign in",
+    "checking": "Checking...",
+    "differentEmail": "Use a different email"
+  },
+  "menu": {
+    "add": "Add",
+    "close": "Close",
+    "soldOut": "Sold out",
+    "from": "from {{price}}"
+  },
+  "options": {
+    "required": "(required)",
+    "optional": "(optional)",
+    "upTo": "(up to {{count}})",
+    "add": "Add · {{price}}",
+    "cancel": "Cancel",
+    "choose": "Please choose: {{group}}"
+  },
+  "cart": {
+    "empty": "Your cart is empty.",
+    "title": "Your order",
+    "notePlaceholder": "Note (optional)",
+    "total": "Total",
+    "placeOrder": "Place order",
+    "placing": "Placing order...",
+    "pickupTime": "Pickup time",
+    "full": "(full)",
+    "left": "({{count}} left)",
+    "noSlots": "No more pickup times today.",
+    "paused": "⏸️ Online orders are paused right now. You can still order at the counter.",
+    "placed": "Order placed!",
+    "showNumber": "Show this number at the counter.",
+    "newOrder": "New order"
+  },
+  "myOrders": {
+    "title": "My orders",
+    "pickup": "Pickup {{time}}",
+    "status": {
+      "pending": "Received",
+      "preparing": "Being prepared",
+      "ready": "Ready for pickup!",
+      "cancelled": "Cancelled"
+    }
+  },
+  "allergens": {
+    "gluten": "🌾 Gluten",
+    "milk": "🥛 Milk",
+    "nuts": "🌰 Nuts",
+    "peanuts": "🥜 Peanuts",
+    "egg": "🥚 Egg",
+    "soy": "🫘 Soy",
+    "sesame": "⚪ Sesame",
+    "fish": "🐟 Fish"
+  },
+  "diets": {
+    "vegan": "🌱 Vegan",
+    "vegetarian": "🥗 Vegetarian"
+  },
+  "errors": {
+    "loginRequired": "You must be logged in",
+    "universityEmail": "Please sign in with your university email to order",
+    "activeLimit": "You already have 2 active orders",
+    "notAvailable": "This item is not available right now",
+    "slotFull": "This pickup time is full. Please choose another one.",
+    "tooSoon": "This pickup time is too soon. Please choose a later one.",
+    "paused": "The café is not taking online orders right now",
+    "chooseOptions": "Please choose the required options",
+    "chooseTime": "Please choose a pickup time"
+  }
+}

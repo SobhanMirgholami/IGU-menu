@@ -1,0 +1,85 @@
+{
+  "app": {
+    "signOut": "Çıkış yap",
+    "signedInAs": "{{email}} olarak giriş yapıldı"
+  },
+  "login": {
+    "title": "Giriş yap",
+    "emailPlaceholder": "Üniversite e-posta adresiniz",
+    "studentHint": "Öğrenciler: sipariş vermek için {{domains}} adresinizi kullanın.",
+    "or": " veya ",
+    "sendCode": "Kod gönder",
+    "sending": "Gönderiliyor...",
+    "codeSent": "{{email}} adresine bir kod gönderdik",
+    "spamHint": "Kodu bulamıyor musunuz? <bold>Spam</bold> klasörünü kontrol edin.",
+    "codePlaceholder": "Kodu girin",
+    "signIn": "Giriş yap",
+    "checking": "Kontrol ediliyor...",
+    "differentEmail": "Farklı bir e-posta kullan"
+  },
+  "menu": {
+    "add": "Ekle",
+    "close": "Kapat",
+    "soldOut": "Tükendi",
+    "from": "başlangıç {{price}}"
+  },
+  "options": {
+    "required": "(zorunlu)",
+    "optional": "(isteğe bağlı)",
+    "upTo": "(en fazla {{count}})",
+    "add": "Ekle · {{price}}",
+    "cancel": "İptal",
+    "choose": "Lütfen seçin: {{group}}"
+  },
+  "cart": {
+    "empty": "Sepetiniz boş.",
+    "title": "Siparişiniz",
+    "notePlaceholder": "Not (isteğe bağlı)",
+    "total": "Toplam",
+    "placeOrder": "Sipariş ver",
+    "placing": "Sipariş veriliyor...",
+    "pickupTime": "Teslim alma saati",
+    "full": "(dolu)",
+    "left": "({{count}} kaldı)",
+    "noSlots": "Bugün için başka teslim saati yok.",
+    "paused": "⏸️ Online siparişler şu anda durduruldu. Kasadan sipariş verebilirsiniz.",
+    "placed": "Sipariş alındı!",
+    "showNumber": "Bu numarayı kasada gösterin.",
+    "newOrder": "Yeni sipariş"
+  },
+  "myOrders": {
+    "title": "Siparişlerim",
+    "pickup": "Teslim {{time}}",
+    "status": {
+      "pending": "Alındı",
+      "preparing": "Hazırlanıyor",
+      "ready": "Teslime hazır!",
+      "cancelled": "İptal edildi"
+    }
+  },
+  "allergens": {
+    "gluten": "🌾 Gluten",
+    "milk": "🥛 Süt",
+    "nuts": "🌰 Kuruyemiş",
+    "peanuts": "🥜 Yer fıstığı",
+    "egg": "🥚 Yumurta",
+    "soy": "🫘 Soya",
+    "sesame": "⚪ Susam",
+    "fish": "🐟 Balık"
+  },
+  "diets": {
+    "vegan": "🌱 Vegan",
+    "vegetarian": "🥗 Vejetaryen"
+  },
+  "errors": {
+    "loginRequired": "Giriş yapmanız gerekiyor",
+    "universityEmail": "Sipariş vermek için üniversite e-postanızla giriş yapın",
+    "activeLimit": "Zaten 2 aktif siparişiniz var",
+    "notAvailable": "Bu ürün şu anda mevcut değil",
+    "slotFull": "Bu teslim saati dolu. Lütfen başka bir saat seçin.",
+    "tooSoon": "Bu teslim saati çok yakın. Lütfen daha geç bir saat seçin.",
+    "paused": "Kafe şu anda online sipariş almıyor",
+    "chooseOptions": "Lütfen gerekli seçenekleri seçin",
+    "chooseTime": "Lütfen bir teslim saati seçin"
+  }
+}

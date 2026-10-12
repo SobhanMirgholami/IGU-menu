@@ -1,4 +1,9 @@
 @import "tailwindcss";
+
+html[lang='ar'] body {
+  font-family: 'Noto Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+}
+
 @media print {
   @page {
     size: 80mm auto;
