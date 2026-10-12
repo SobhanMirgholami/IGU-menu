@@ -112,6 +112,7 @@
       "availability": "Tükenenler",
       "menu": "Menü",
       "options": "Seçenekler",
+      "staff": "Personel",
       "reports": "Raporlar",
       "settings": "Ayarlar"
     },
@@ -146,7 +147,26 @@
     "note": "Not: {{note}}",
     "ordered": "Sipariş {{time}}",
     "available": "Mevcut",
-    "soldOut": "Tükendi"
+    "soldOut": "Tükendi",
+    "pin": {
+      "loading": "Yükleniyor...",
+      "whoIsWorking": "Kim çalışıyor?",
+      "noStaff": "Henüz personel yok. Yönetici, Personel sekmesinden ekler.",
+      "notMe": "Ben değilim",
+      "hello": "Merhaba {{name}}!",
+      "enter": "PIN kodunu gir",
+      "digits": "{{count}} rakam girildi",
+      "delete": "Sil",
+      "go": "Aç",
+      "wrong": "Yanlış PIN. Tekrar dene.",
+      "locked": "Çok fazla yanlış deneme. 5 dakika bekle.",
+      "failed": "Açılamadı. Tekrar dene.",
+      "switch": "Kişi değiştir",
+      "shift": {
+        "morning": "Sabah vardiyası",
+        "evening": "Akşam vardiyası"
+      }
+    }
   },
   "manager": {
     "addItem": "Yeni ürün ekle",
@@ -245,6 +265,54 @@
       "errors": {
         "max": "1 ile 10 arasında bir sayı girin.",
         "priceDelta": "-1000 ile 1000 arasında bir ek fiyat girin."
+      }
+    },
+    "team": {
+      "intro": "Herkes kafe bilgisayarını ortak kullanır ve kendi PIN koduyla açar. Her işlem kişinin adı ve vardiyasıyla kaydedilir.",
+      "add": "Personel ekle",
+      "edit": "{{name}} düzenle",
+      "name": "Ad",
+      "pin": "PIN (4–6 rakam)",
+      "newPin": "Yeni PIN (isteğe bağlı)",
+      "pinAgain": "PIN tekrar",
+      "pinHint": "1234 veya 0000 gibi kolay PIN kodları kabul edilmez.",
+      "pinKeep": "Mevcut PIN kalsın istiyorsan boş bırak. Yeni PIN oturumu kapatır.",
+      "save": "Kaydet",
+      "editButton": "Düzenle",
+      "active": "Aktif",
+      "inactive": "Kapalı",
+      "empty": "Henüz personel yok. İlk kişiyi ekle.",
+      "lastSeen": "Son işlem {{time}}",
+      "never": "Hiç giriş yapmadı",
+      "lockedNow": "Kilitli (çok fazla yanlış PIN)",
+      "loading": "Yükleniyor...",
+      "logTitle": "İşlem geçmişi",
+      "day": "Gün",
+      "shift": "Vardiya",
+      "person": "Kişi",
+      "all": "Tümü",
+      "noActivity": "Bu gün hiçbir işlem yok.",
+      "shifts": {
+        "morning": "Sabah",
+        "evening": "Akşam"
+      },
+      "actions": {
+        "order_preparing": "#{{order}} siparişini hazırlamaya başladı",
+        "order_ready": "#{{order}} siparişi hazır",
+        "order_completed": "#{{order}} siparişi teslim edildi",
+        "order_cancelled": "#{{order}} siparişini iptal etti",
+        "order_paid": "#{{order}} siparişi ödendi",
+        "orders_paused": "Online siparişleri durdurdu",
+        "orders_resumed": "Online siparişleri açtı",
+        "item_sold_out": "{{item}} tükendi",
+        "item_available": "{{item}} tekrar mevcut"
+      },
+      "errors": {
+        "name": "Bir ad gir.",
+        "PIN_FORMAT": "PIN 4 ile 6 rakam arasında olmalı.",
+        "PIN_TOO_EASY": "Bu PIN tahmin etmek için çok kolay. Başka bir tane seç.",
+        "NAME_TAKEN": "Bu isimde biri zaten var.",
+        "pinMatch": "İki PIN aynı değil."
       }
     }
   }

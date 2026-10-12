@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { pick } from '../lib/localize'
+import { staffRpc } from '../lib/staffSession'
 
 export default function AvailabilityPanel() {
   const { t, i18n } = useTranslation()
@@ -23,13 +24,14 @@ export default function AvailabilityPanel() {
   }, [])
 
   async function toggle(item) {
-    const { error } = await supabase.rpc('set_item_availability', {
+    const { error } = await staffRpc('set_item_availability', {
       p_item_id: item.id,
       p_available: !item.is_available,
     })
 
-    if (error) alert(error.message)
-    else load()
+    if (error) {
+      if (error.message !== 'PIN_REQUIRED') alert(error.message)
+    } else load()
   }
 
   return (

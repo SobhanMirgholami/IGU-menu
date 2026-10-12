@@ -112,6 +112,7 @@
       "availability": "Sold out",
       "menu": "Menu",
       "options": "Options",
+      "staff": "Staff",
       "reports": "Reports",
       "settings": "Settings"
     },
@@ -146,7 +147,26 @@
     "note": "Note: {{note}}",
     "ordered": "Ordered {{time}}",
     "available": "Available",
-    "soldOut": "Sold out"
+    "soldOut": "Sold out",
+    "pin": {
+      "loading": "Loading...",
+      "whoIsWorking": "Who's working?",
+      "noStaff": "No staff yet. The manager adds people in the Staff tab.",
+      "notMe": "Not me",
+      "hello": "Hi {{name}}!",
+      "enter": "Enter your PIN",
+      "digits": "{{count}} digits entered",
+      "delete": "Delete",
+      "go": "Unlock",
+      "wrong": "Wrong PIN. Try again.",
+      "locked": "Too many wrong tries. Wait 5 minutes.",
+      "failed": "Couldn't unlock. Try again.",
+      "switch": "Switch person",
+      "shift": {
+        "morning": "Morning shift",
+        "evening": "Evening shift"
+      }
+    }
   },
   "manager": {
     "addItem": "Add new item",
@@ -245,6 +265,54 @@
       "errors": {
         "max": "Choose a number from 1 to 10.",
         "priceDelta": "Enter an extra price between -1000 and 1000."
+      }
+    },
+    "team": {
+      "intro": "Everyone shares the café computer, and each person unlocks it with their own PIN. Every action is saved under their name and shift.",
+      "add": "Add staff member",
+      "edit": "Edit {{name}}",
+      "name": "Name",
+      "pin": "PIN (4–6 digits)",
+      "newPin": "New PIN (optional)",
+      "pinAgain": "PIN again",
+      "pinHint": "Avoid easy PINs like 1234 or 0000, they won't be accepted.",
+      "pinKeep": "Leave empty to keep the current PIN. A new PIN signs them out.",
+      "save": "Save",
+      "editButton": "Edit",
+      "active": "Active",
+      "inactive": "Turned off",
+      "empty": "No staff yet. Add the first person.",
+      "lastSeen": "Last active {{time}}",
+      "never": "Never signed in",
+      "lockedNow": "Locked (too many wrong PINs)",
+      "loading": "Loading...",
+      "logTitle": "Activity log",
+      "day": "Day",
+      "shift": "Shift",
+      "person": "Person",
+      "all": "All",
+      "noActivity": "Nothing happened on this day.",
+      "shifts": {
+        "morning": "Morning",
+        "evening": "Evening"
+      },
+      "actions": {
+        "order_preparing": "Started order #{{order}}",
+        "order_ready": "Order #{{order}} ready",
+        "order_completed": "Order #{{order}} picked up",
+        "order_cancelled": "Cancelled order #{{order}}",
+        "order_paid": "Order #{{order}} paid",
+        "orders_paused": "Paused online orders",
+        "orders_resumed": "Resumed online orders",
+        "item_sold_out": "{{item}} sold out",
+        "item_available": "{{item}} available again"
+      },
+      "errors": {
+        "name": "Enter a name.",
+        "PIN_FORMAT": "The PIN must be 4 to 6 digits.",
+        "PIN_TOO_EASY": "This PIN is too easy to guess. Pick another one.",
+        "NAME_TAKEN": "Someone with this name already exists.",
+        "pinMatch": "The two PINs don't match."
       }
     }
   }

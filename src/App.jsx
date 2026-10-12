@@ -16,11 +16,27 @@ import ManagerOptions from './components/ManagerOptions'
 import AvailabilityPanel from './components/AvailabilityPanel'
 import SalesReport from './components/SalesReport'
 import CafeSettings from './components/CafeSettings'
+import ManagerStaff from './components/ManagerStaff'
+import PinLock from './components/PinLock'
+import { getStaffSession, clearStaffSession, lockTerminal, onTerminalLocked } from './lib/staffSession'
 import { ArrowIcon, LogoutIcon } from './components/icons'
 
 const TABS = {
   staff: ['orders', 'availability'],
-  manager: ['orders', 'menu', 'options', 'reports', 'settings'],
+  manager: ['orders', 'menu', 'options', 'staff', 'reports', 'settings'],
+}
+
+const IDLE_LOCK_MS = 30 * 60 * 1000 // same as the server's idle limit
+
+const currentShift = () =>
+  Number(new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: 'Europe/Istanbul' }).format(new Date())) < 15
+    ? 'morning'
+    : 'evening'
+
+async function endStaffSession() {
+  const session = getStaffSession()
+  if (session) await supabase.rpc('staff_lock', { p_session: session })
+  lockTerminal()
 }
 
 function nameFromEmail(email) {
@@ -36,6 +52,8 @@ function App() {
   const [checking, setChecking] = useState(true)
   const [cart, setCart] = useState([])
   const [tab, setTab] = useState('orders')
+  const [staffName, setStaffName] = useState(null) // who typed their PIN on the shared terminal
+  const [staffChecked, setStaffChecked] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -46,6 +64,9 @@ function App() {
     const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession)
       if (!newSession) {
+        clearStaffSession()
+        setStaffName(null)
+        setStaffChecked(false)
         setCart([])
         setRole(null)
         setTab('orders')
@@ -69,6 +90,41 @@ function App() {
     }
     loadRole()
   }, [session])
+
+  // Shared staff terminal: is a saved PIN session still alive?
+  useEffect(() => {
+    if (role !== 'staff') return
+    const saved = getStaffSession()
+    if (!saved) {
+      setStaffChecked(true)
+      return
+    }
+    supabase.rpc('staff_session_check', { p_session: saved }).then(({ data }) => {
+      if (data?.ok) setStaffName(data.name)
+      else clearStaffSession()
+      setStaffChecked(true)
+    })
+  }, [role])
+
+  // Back to the PIN screen when the session ends (switch person, or server says it expired)
+  useEffect(() => onTerminalLocked(() => setStaffName(null)), [])
+
+  // Lock after 30 minutes with no taps or key presses
+  useEffect(() => {
+    if (role !== 'staff' || !staffName) return
+    let timer = setTimeout(endStaffSession, IDLE_LOCK_MS)
+    const reset = () => {
+      clearTimeout(timer)
+      timer = setTimeout(endStaffSession, IDLE_LOCK_MS)
+    }
+    window.addEventListener('pointerdown', reset)
+    window.addEventListener('keydown', reset)
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('pointerdown', reset)
+      window.removeEventListener('keydown', reset)
+    }
+  }, [role, staffName])
 
   function addToCart(item, options = []) {
     const optionIds = options.map((o) => o.id).sort((a, b) => a - b)
@@ -117,6 +173,8 @@ function App() {
 
   if (isStaff) {
     const tabs = TABS[role] ?? []
+    const needsPin = role === 'staff' && !staffName
+    if (role === 'staff' && !staffChecked) return <p className="p-6 text-muted">...</p>
 
     return (
       <div className="min-h-screen bg-page text-fg p-5 sm:p-8">
@@ -130,7 +188,10 @@ function App() {
               <LanguageSwitcher />
               <ThemeToggle />
               <button
-                onClick={() => supabase.auth.signOut()}
+                onClick={async () => {
+                  if (role === 'staff') await endStaffSession()
+                  supabase.auth.signOut()
+                }}
                 aria-label={t('app.signOut')}
                 className="w-11 h-11 rounded-full border-2 border-ink bg-white text-ink flex items-center justify-center"
               >
@@ -139,10 +200,36 @@ function App() {
             </div>
           </header>
 
-          <p className="text-sm text-muted print:hidden">
-            {t('app.signedInAs', { email: session.user.email })} · {t(`staff.role.${role}`)}
-          </p>
+          {role === 'staff' && staffName ? (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-[20px] border-2 border-line bg-surface p-3 ps-4 print:hidden">
+              <span className="flex items-center gap-3 font-bold">
+                <span
+                  aria-hidden="true"
+                  className="w-9 h-9 rounded-full bg-pop text-ink font-extrabold flex items-center justify-center"
+                >
+                  {staffName.charAt(0).toUpperCase()}
+                </span>
+                <span>
+                  {staffName}
+                  <span className="block text-xs font-semibold text-muted">{t(`staff.pin.shift.${currentShift()}`)}</span>
+                </span>
+              </span>
+              <button
+                onClick={endStaffSession}
+                className="h-10 px-4 rounded-full border-2 border-ink bg-pop text-ink font-bold text-sm shadow-hard-sm"
+              >
+                {t('staff.pin.switch')}
+              </button>
+            </div>
+          ) : (
+            <p className="text-sm text-muted print:hidden">
+              {t('app.signedInAs', { email: session.user.email })} · {t(`staff.role.${role}`)}
+            </p>
+          )}
 
+          {needsPin && <PinLock onUnlock={setStaffName} />}
+
+          {!needsPin && (
           <nav className="flex flex-wrap gap-2 print:hidden">
             {tabs.map((tabId) => (
               <button
@@ -159,11 +246,13 @@ function App() {
               </button>
             ))}
           </nav>
+          )}
 
-          {tab === 'orders' && <StaffDashboard />}
-          {tab === 'availability' && <AvailabilityPanel />}
+          {!needsPin && tab === 'orders' && <StaffDashboard />}
+          {!needsPin && tab === 'availability' && <AvailabilityPanel />}
           {tab === 'menu' && role === 'manager' && <ManagerMenu />}
           {tab === 'options' && role === 'manager' && <ManagerOptions />}
+          {tab === 'staff' && role === 'manager' && <ManagerStaff />}
           {tab === 'reports' && role === 'manager' && <SalesReport />}
           {tab === 'settings' && role === 'manager' && <CafeSettings />}
         </div>

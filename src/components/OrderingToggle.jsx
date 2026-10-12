@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { staffRpc } from '../lib/staffSession'
 
 export default function OrderingToggle() {
   const { t } = useTranslation()
@@ -32,9 +33,10 @@ export default function OrderingToggle() {
   async function toggle() {
     if (accepting && !confirm(t('staff.confirmPause'))) return
 
-    const { error } = await supabase.rpc('set_accepting_orders', { p_accepting: !accepting })
-    if (error) alert(error.message)
-    else load()
+    const { error } = await staffRpc('set_accepting_orders', { p_accepting: !accepting })
+    if (error) {
+      if (error.message !== 'PIN_REQUIRED') alert(error.message)
+    } else load()
   }
 
   if (accepting === null) return null

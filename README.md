@@ -60,6 +60,8 @@ I designed the look myself before writing the code: **bold and playful, in the u
 - 🌙 Light and dark mode that follows your phone, or your own choice
 
 ### 👨‍🍳 For staff
+- 🔢 One shared café computer: tap your name, type your PIN, and you're in
+- 🔁 "Switch person" at shift change; the screen locks itself after 30 idle minutes
 - ⚡ Live dashboard, orders sorted by pickup time
 - 🔄 One tap to move orders: preparing → ready → picked up
 - 💵 Mark orders as paid at the counter
@@ -85,6 +87,8 @@ I designed the look myself before writing the code: **bold and playful, in the u
   - 📋 hourly and item tables with each one's share of income
   - 🖨️ prints cleanly: dashboard on page 1, tables on page 2
 - 🖨️ Print reports straight from the browser
+- 👥 Add staff, set or reset PINs, and turn people off without losing their history
+- 🕵️ Activity log by day, shift, and person: who started, finished, cancelled, or took payment for each order
 - 🌍 Manager screens in all three languages
 
 ---
@@ -103,6 +107,8 @@ I treated security as a core feature, not an afterthought:
 - 🏁 **Race condition protection:** per-student locks stop duplicate orders, per-slot locks stop overbooking
 - 📜 **Business rules in the database:** no pickup without payment, paid orders can't be cancelled
 - 🕵️ **Full order history:** every change is logged with who, when, and which shift
+- 🔢 **Hashed staff PINs:** stored with bcrypt, easy PINs like 1234 refused, 5 wrong tries lock that person for 5 minutes
+- ⏱️ **Staff sessions expire** after 30 idle minutes or 12 hours, and are checked on the server for every action
 - 🧊 **Frozen prices:** each order saves its prices and options, so menu changes never rewrite history
 - 🗃️ **Nothing is deleted:** menu items are archived, so old orders and reports stay correct
 
@@ -149,6 +155,8 @@ src/
 │   ├── AvailabilityPanel.jsx  🚫 Staff sold-out toggles
 │   ├── ManagerMenu.jsx        🍰 Manager menu editor
 │   ├── ManagerOptions.jsx     🛠️ Option groups and choices
+│   ├── ManagerStaff.jsx       👥 Staff, PINs, and activity log
+│   ├── PinLock.jsx            🔢 "Who's working?" PIN screen
 │   ├── NameFields.jsx         🌍 3-language name inputs + translate
 │   ├── SalesReport.jsx        📊 Sales reports
 │   └── CafeSettings.jsx       ⚙️ Hours and slot settings
@@ -163,6 +171,7 @@ src/
 │   ├── print.js               🖨️ Prints the receipt at its exact 80mm size
 │   ├── exportExcel.js         📥 Fills the Excel template with report data
 │   ├── translate.js           🪄 Machine translation for names
+│   ├── staffSession.js        🔢 PIN session for staff actions
 │   └── errors.js              ⚠️ Translates database errors
 ├── i18n.js                    🌍 Language setup and RTL
 ├── theme.js                   🌙 Theme logic
@@ -179,7 +188,8 @@ database/
 ├── 08_university_email.sql    University-email-only ordering
 ├── 09_item_options.sql        Options, allergens, option pricing
 ├── 10_pickup_slots.sql        Pickup slots, capacity, pause orders
-└── 11_hardening.sql          Locks down helper functions, adds indexes
+├── 11_hardening.sql          Locks down helper functions, adds indexes
+└── 12_staff_pins.sql         Staff PINs, sessions, activity log
 
 public/
 └── sales-report-template.xlsx 📊 Empty Excel dashboard the app fills in
@@ -204,7 +214,7 @@ npm install
 
 **2. Set up Supabase**
 - Create a project at [supabase.com](https://supabase.com)
-- Run the files in `database/` **in order** (01 → 11) in the SQL Editor
+- Run the files in `database/` **in order** (01 → 12) in the SQL Editor
 - Connect an SMTP provider and add `{{ .Token }}` to the **Magic Link** and **Confirm signup** email templates
 
 **3. Allow your university's email domain**
@@ -247,6 +257,8 @@ select id, 'staff' from auth.users where email = 'staff@example.com';
 ```
 Use `'manager'` instead of `'staff'` for the café manager.
 
+> 💡 Give `'staff'` to **one shared café account** (the counter computer), not to each person. People are added in the manager's **Staff** tab and unlock the terminal with their own PIN.
+
 ---
 
 ## 🗺️ Roadmap
@@ -264,6 +276,7 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] 📥 Excel dashboard export with charts, in 3 languages
 - [x] 🪄 Auto-translate menu names to English and Arabic
 - [x] 🛠️ Manager screen for item options, allergens, and diet tags
+- [x] 🔢 Staff PINs on a shared terminal, with an activity log by person and shift
 - [x] 🎓 University-email-only ordering
 - [x] ☕ Item options (size, milk, extra shot) and allergen tags
 - [x] ⏰ Pickup time slots and "pause orders" for rush hours
@@ -276,10 +289,9 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] 🎫 "Order ready" ticket with a live progress tracker
 
 ### 🚧 In progress
-- [ ] 🔢 Staff PIN system for shared terminals
+- [ ] 🐞 Bug report form and developer dashboard
 
 ### 📌 Planned
-- [ ] 🐞 Bug report form and developer dashboard
 - [ ] 📜 Terms of use and KVKK privacy notice
 - [ ] 📱 Installable app with "order ready" notifications
 

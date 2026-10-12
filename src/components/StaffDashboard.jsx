@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { formatPrice, formatTime } from '../lib/format'
 import { pick } from '../lib/localize'
 import { printReceipt } from '../lib/print'
+import { staffRpc } from '../lib/staffSession'
 import Receipt from './Receipt'
 import OrderingToggle from './OrderingToggle'
 import { ClockIcon } from './icons'
@@ -59,17 +60,17 @@ export default function StaffDashboard() {
   async function changeStatus(orderId, status) {
     if (status === 'cancelled' && !confirm(t('staff.confirmCancel', { id: orderId }))) return
 
-    const { error } = await supabase.rpc('update_order_status', {
+    const { error } = await staffRpc('update_order_status', {
       p_order_id: orderId,
       p_status: status,
     })
 
-    if (error) alert(error.message)
+    if (error && error.message !== 'PIN_REQUIRED') alert(error.message)
   }
 
   async function markPaid(orderId) {
-    const { error } = await supabase.rpc('mark_order_paid', { p_order_id: orderId })
-    if (error) alert(error.message)
+    const { error } = await staffRpc('mark_order_paid', { p_order_id: orderId })
+    if (error && error.message !== 'PIN_REQUIRED') alert(error.message)
   }
 
   return (
