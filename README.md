@@ -70,12 +70,19 @@ I designed the look myself before writing the code: **bold and playful, in the u
 
 ### 📊 For the café manager
 - 🍰 Add menu items in Turkish, English, and Arabic
+- 🪄 One-click translate: type the Turkish name, get English and Arabic filled in
 - ✏️ Edit prices and categories
 - 🗄️ Archive old items without losing order history
 - ⚙️ Set opening hours, slot length, orders per slot, and preparation time
 - 📈 Sales reports by date and hour: income, orders, average order, cancellations
 - 🏆 Best-selling items and busiest hours
-- 📥 Export reports to Excel
+- 📥 Export reports to an Excel dashboard:
+  - 🗂️ one sheet per language (Türkçe, English, العربية with right-to-left)
+  - 🔢 big number cards: income, orders, average order, cancelled
+  - 📊 4 charts: orders by hour, income by hour, best sellers, income by item
+  - 📋 hourly and item tables with each one's share of income
+  - 🖨️ prints cleanly: dashboard on page 1, tables on page 2
+- 🖨️ Print reports straight from the browser
 - 🌍 Manager screens in all three languages
 
 ---
@@ -110,7 +117,8 @@ I treated security as a core feature, not an afterthought:
 | 📡 Live updates | Supabase Realtime |
 | 🌍 Languages | i18next + react-i18next, RTL support |
 | 🌙 Themes | CSS variables + View Transitions API |
-| 🖨️ Printing | Browser print + 80mm print CSS |
+| 🖨️ Printing | Browser print, 80mm receipt sized in JS |
+| 📥 Excel export | JSZip fills a template built with Python (openpyxl) |
 | 🚀 Hosting | Vercel, auto-deploy on every push |
 
 ---
@@ -148,6 +156,8 @@ src/
 │   ├── supabase.js            🔌 Supabase client
 │   ├── format.js              💰 Price and time formatting
 │   ├── localize.js            🌍 Picks the right language from the database
+│   ├── print.js               🖨️ Prints the receipt at its exact 80mm size
+│   ├── exportExcel.js         📥 Fills the Excel template with report data
 │   └── errors.js              ⚠️ Translates database errors
 ├── i18n.js                    🌍 Language setup and RTL
 ├── theme.js                   🌙 Theme logic
@@ -163,7 +173,14 @@ database/
 ├── 07_sales_report.sql        Sales report function
 ├── 08_university_email.sql    University-email-only ordering
 ├── 09_item_options.sql        Options, allergens, option pricing
-└── 10_pickup_slots.sql        Pickup slots, capacity, pause orders
+├── 10_pickup_slots.sql        Pickup slots, capacity, pause orders
+└── 11_hardening.sql          Locks down helper functions, adds indexes
+
+public/
+└── sales-report-template.xlsx 📊 Empty Excel dashboard the app fills in
+
+tools/
+└── make-excel-template.py   🐍 Builds the Excel template
 
 assets/
 └── banner1.svg                🎨 README banner
@@ -182,7 +199,7 @@ npm install
 
 **2. Set up Supabase**
 - Create a project at [supabase.com](https://supabase.com)
-- Run the files in `database/` **in order** (01 → 10) in the SQL Editor
+- Run the files in `database/` **in order** (01 → 11) in the SQL Editor
 - Connect an SMTP provider and add `{{ .Token }}` to the **Magic Link** and **Confirm signup** email templates
 
 **3. Allow your university's email domain**
@@ -198,6 +215,18 @@ VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 ```
 > ⚠️ Use the **publishable** key only. The secret key never goes in the frontend, and `.env` never goes on GitHub.
+
+<details>
+<summary>📊 Changing the Excel report design (optional)</summary>
+
+The template is made by a Python script. Edit it, then rebuild:
+```bash
+pip install openpyxl
+python tools/make-excel-template.py public/sales-report-template.xlsx
+```
+> If you move rows or bump `TEMPLATE_VERSION`, update the same values in `src/lib/exportExcel.js`.
+
+</details>
 
 **5. Run it**
 ```bash
@@ -226,7 +255,9 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] Order history with shifts
 - [x] Manager menu editor: add items, edit prices, archive
 - [x] Staff sold-out toggle
-- [x] 📊 Sales reports by date and hour, with Excel export
+- [x] 📊 Sales reports by date and hour
+- [x] 📥 Excel dashboard export with charts, in 3 languages
+- [x] 🪄 Auto-translate menu names to English and Arabic
 - [x] 🎓 University-email-only ordering
 - [x] ☕ Item options (size, milk, extra shot) and allergen tags
 - [x] ⏰ Pickup time slots and "pause orders" for rush hours
