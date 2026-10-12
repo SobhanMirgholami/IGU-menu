@@ -1,7 +1,23 @@
 {
   "app": {
     "signOut": "Sign out",
-    "signedInAs": "Signed in as {{email}}"
+    "signedInAs": "Signed in as {{email}}",
+    "language": "Change language"
+  },
+  "home": {
+    "greeting": "Hi {{name}},",
+    "headline": "What are we <pop>drinking</pop> today?",
+    "welcome": "Skip the line. <pop>Order</pop> from your phone.",
+    "nextPickup": "Next pickup {{time}}",
+    "skipLine": "Order now, skip the line",
+    "left": "{{count}} left",
+    "noSlots": "No more pickup times today",
+    "paused": "Online orders are paused",
+    "viewOrder": "View order"
+  },
+  "theme": {
+    "dark": "Switch to dark mode",
+    "light": "Switch to light mode"
   },
   "login": {
     "title": "Sign in",
@@ -81,5 +97,46 @@
     "paused": "The café is not taking online orders right now",
     "chooseOptions": "Please choose the required options",
     "chooseTime": "Please choose a pickup time"
+  },
+  "staff": {
+    "tabs": {
+      "orders": "Orders",
+      "availability": "Sold out",
+      "menu": "Menu",
+      "reports": "Reports",
+      "settings": "Settings"
+    },
+    "role": {
+      "staff": "staff",
+      "manager": "manager"
+    },
+    "accepting": "Taking online orders",
+    "paused": "Online orders paused",
+    "pause": "Pause",
+    "resume": "Resume",
+    "confirmPause": "Pause online orders? Students will not be able to order.",
+    "activeOrders": "Active orders ({{count}})",
+    "noOrders": "No active orders.",
+    "paid": "Paid",
+    "unpaid": "Unpaid",
+    "status": {
+      "pending": "New",
+      "preparing": "Preparing",
+      "ready": "Ready"
+    },
+    "next": {
+      "pending": "Start preparing",
+      "preparing": "Ready",
+      "ready": "Picked up"
+    },
+    "markPaid": "Mark paid",
+    "print": "Print",
+    "cancel": "Cancel",
+    "confirmCancel": "Cancel order #{{id}}?",
+    "payFirst": "Mark as paid first",
+    "note": "Note: {{note}}",
+    "ordered": "Ordered {{time}}",
+    "available": "Available",
+    "soldOut": "Sold out"
   }
 }

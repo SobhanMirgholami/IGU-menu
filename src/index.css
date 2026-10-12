@@ -1,6 +1,76 @@
 @import "tailwindcss";
 
-html[lang='ar'] body {
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand: #0B3D91;
+  --color-brand-soft: #DCE6FF;
+  --color-pop: #FFC93C;
+  --color-coral: #FF6B4A;
+  --color-coral-soft: #FFE1D9;
+  --color-mint: #3DDC97;
+  --color-mint-soft: #D4F7E6;
+  --color-ink: #0E1630;
+}
+
+:root {
+  --page: #F3F5FB;
+  --surface: #FFFFFF;
+  --fg: #0E1630;
+  --muted: #4A5578;
+  --line: #0E1630;
+  --soft-line: #C9D2EA;
+  --chip: #F3F5FB;
+  --shadow: #0E1630;
+  color-scheme: light;
+}
+
+.dark {
+  --page: #0A1124;
+  --surface: #141E3A;
+  --fg: #EEF2FF;
+  --muted: #A9B4D6;
+  --line: #3A4A7A;
+  --soft-line: #2A3660;
+  --chip: #0A1124;
+  --shadow: #FFC93C;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-soft-line: var(--soft-line);
+  --color-chip: var(--chip);
+}
+
+@utility shadow-hard {
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+
+@utility shadow-hard-sm {
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+
+body {
+  background: var(--page);
+  color: var(--fg);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+html[lang='ar'] body,
+html[lang='ar'] .font-display {
   font-family: 'Noto Sans Arabic', ui-sans-serif, system-ui, sans-serif;
 }
 

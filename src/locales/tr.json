@@ -1,7 +1,23 @@
 {
   "app": {
     "signOut": "Çıkış yap",
-    "signedInAs": "{{email}} olarak giriş yapıldı"
+    "signedInAs": "{{email}} olarak giriş yapıldı",
+    "language": "Dili değiştir"
+  },
+  "home": {
+    "greeting": "Merhaba {{name}},",
+    "headline": "Bugün ne <pop>içiyoruz</pop>?",
+    "welcome": "Sırada bekleme. Telefonundan <pop>sipariş</pop> ver.",
+    "nextPickup": "Sıradaki teslim {{time}}",
+    "skipLine": "Şimdi sipariş ver, sırada bekleme",
+    "left": "{{count}} kaldı",
+    "noSlots": "Bugün için teslim saati kalmadı",
+    "paused": "Online siparişler durduruldu",
+    "viewOrder": "Siparişi gör"
+  },
+  "theme": {
+    "dark": "Koyu temaya geç",
+    "light": "Açık temaya geç"
   },
   "login": {
     "title": "Giriş yap",
@@ -81,5 +97,46 @@
     "paused": "Kafe şu anda online sipariş almıyor",
     "chooseOptions": "Lütfen gerekli seçenekleri seçin",
     "chooseTime": "Lütfen bir teslim saati seçin"
+  },
+  "staff": {
+    "tabs": {
+      "orders": "Siparişler",
+      "availability": "Tükenenler",
+      "menu": "Menü",
+      "reports": "Raporlar",
+      "settings": "Ayarlar"
+    },
+    "role": {
+      "staff": "personel",
+      "manager": "yönetici"
+    },
+    "accepting": "Online sipariş alınıyor",
+    "paused": "Online siparişler durduruldu",
+    "pause": "Durdur",
+    "resume": "Devam et",
+    "confirmPause": "Online siparişler durdurulsun mu? Öğrenciler sipariş veremeyecek.",
+    "activeOrders": "Aktif siparişler ({{count}})",
+    "noOrders": "Aktif sipariş yok.",
+    "paid": "Ödendi",
+    "unpaid": "Ödenmedi",
+    "status": {
+      "pending": "Yeni",
+      "preparing": "Hazırlanıyor",
+      "ready": "Hazır"
+    },
+    "next": {
+      "pending": "Hazırlamaya başla",
+      "preparing": "Hazır",
+      "ready": "Teslim edildi"
+    },
+    "markPaid": "Ödendi olarak işaretle",
+    "print": "Yazdır",
+    "cancel": "İptal",
+    "confirmCancel": "#{{id}} numaralı sipariş iptal edilsin mi?",
+    "payFirst": "Önce ödemeyi işaretleyin",
+    "note": "Not: {{note}}",
+    "ordered": "Sipariş {{time}}",
+    "available": "Mevcut",
+    "soldOut": "Tükendi"
   }
 }

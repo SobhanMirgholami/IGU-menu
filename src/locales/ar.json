@@ -1,7 +1,23 @@
 {
   "app": {
     "signOut": "تسجيل الخروج",
-    "signedInAs": "تم تسجيل الدخول باسم {{email}}"
+    "signedInAs": "تم تسجيل الدخول باسم {{email}}",
+    "language": "تغيير اللغة"
+  },
+  "home": {
+    "greeting": "مرحبًا {{name}}،",
+    "headline": "ماذا <pop>نشرب</pop> اليوم؟",
+    "welcome": "تجاوز الطابور. <pop>اطلب</pop> من هاتفك.",
+    "nextPickup": "أقرب استلام {{time}}",
+    "skipLine": "اطلب الآن وتجاوز الطابور",
+    "left": "متبقٍ {{count}}",
+    "noSlots": "لا توجد أوقات استلام متبقية اليوم",
+    "paused": "الطلبات عبر الإنترنت متوقفة",
+    "viewOrder": "عرض الطلب"
+  },
+  "theme": {
+    "dark": "التبديل إلى الوضع الداكن",
+    "light": "التبديل إلى الوضع الفاتح"
   },
   "login": {
     "title": "تسجيل الدخول",
@@ -70,6 +86,47 @@
   "diets": {
     "vegan": "🌱 نباتي صرف",
     "vegetarian": "🥗 نباتي"
+  },
+    "staff": {
+    "tabs": {
+      "orders": "الطلبات",
+      "availability": "المنتجات النافدة",
+      "menu": "القائمة",
+      "reports": "التقارير",
+      "settings": "الإعدادات"
+    },
+    "role": {
+      "staff": "موظف",
+      "manager": "مدير"
+    },
+    "accepting": "نستقبل الطلبات عبر الإنترنت",
+    "paused": "الطلبات عبر الإنترنت متوقفة",
+    "pause": "إيقاف",
+    "resume": "استئناف",
+    "confirmPause": "إيقاف الطلبات عبر الإنترنت؟ لن يتمكن الطلاب من الطلب.",
+    "activeOrders": "الطلبات النشطة ({{count}})",
+    "noOrders": "لا توجد طلبات نشطة.",
+    "paid": "مدفوع",
+    "unpaid": "غير مدفوع",
+    "status": {
+      "pending": "جديد",
+      "preparing": "قيد التحضير",
+      "ready": "جاهز"
+    },
+    "next": {
+      "pending": "بدء التحضير",
+      "preparing": "جاهز",
+      "ready": "تم الاستلام"
+    },
+    "markPaid": "تحديد كمدفوع",
+    "print": "طباعة",
+    "cancel": "إلغاء",
+    "confirmCancel": "إلغاء الطلب رقم {{id}}؟",
+    "payFirst": "حدّد الدفع أولًا",
+    "note": "ملاحظة: {{note}}",
+    "ordered": "تم الطلب {{time}}",
+    "available": "متوفر",
+    "soldOut": "نفد"
   },
   "errors": {
     "loginRequired": "يجب تسجيل الدخول",
