@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
-import { formatPrice } from '../lib/format'
+import { formatPrice, formatTime } from '../lib/format'
 
-const STATUS = {
-  pending: { label: 'Received', style: 'bg-yellow-100 text-yellow-800' },
-  preparing: { label: 'Being prepared', style: 'bg-blue-100 text-blue-800' },
-  ready: { label: 'Ready for pickup!', style: 'bg-green-100 text-green-800' },
-  cancelled: { label: 'Cancelled', style: 'bg-red-100 text-red-800' },
+const STATUS_STYLE = {
+  pending: 'bg-yellow-100 text-yellow-800',
+  preparing: 'bg-blue-100 text-blue-800',
+  ready: 'bg-green-100 text-green-800',
+  cancelled: 'bg-red-100 text-red-800',
 }
 
 export default function MyOrders() {
+  const { t } = useTranslation()
   const [orders, setOrders] = useState([])
   const previousStatus = useRef({})
 
@@ -18,7 +20,7 @@ export default function MyOrders() {
 
     const { data, error } = await supabase
       .from('orders')
-      .select('id, status, total, created_at')
+      .select('id, status, total, created_at, pickup_at')
       .neq('status', 'completed')
       .gte('created_at', since)
       .order('created_at', { ascending: false })
@@ -53,7 +55,7 @@ export default function MyOrders() {
 
   return (
     <div className="space-y-2">
-      <h2 className="font-semibold text-amber-800">My orders</h2>
+      <h2 className="font-semibold text-amber-800">{t('myOrders.title')}</h2>
       {orders.map((order) => (
         <div
           key={order.id}
@@ -63,10 +65,13 @@ export default function MyOrders() {
         >
           <div>
             <p className="text-xl font-bold">#{order.id}</p>
-            <p className="text-sm text-gray-500">{formatPrice(order.total)}</p>
+            <p className="text-sm text-gray-500">
+              {formatPrice(order.total)}
+              {order.pickup_at && ` · ${t('myOrders.pickup', { time: formatTime(order.pickup_at) })}`}
+            </p>
           </div>
-          <span className={`text-sm px-3 py-1 rounded-full ${STATUS[order.status].style}`}>
-            {STATUS[order.status].label}
+          <span className={`text-sm px-3 py-1 rounded-full ${STATUS_STYLE[order.status]}`}>
+            {t(`myOrders.status.${order.status}`)}
           </span>
         </div>
       ))}
