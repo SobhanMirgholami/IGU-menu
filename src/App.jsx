@@ -5,12 +5,28 @@ import Menu from './components/Menu'
 import Cart from './components/Cart'
 import MyOrders from './components/MyOrders'
 import StaffDashboard from './components/StaffDashboard'
+import ManagerMenu from './components/ManagerMenu'
+import AvailabilityPanel from './components/AvailabilityPanel'
+import SalesReport from './components/SalesReport'
+
+const TABS = {
+  staff: [
+    { id: 'orders', label: 'Orders' },
+    { id: 'availability', label: 'Sold out' },
+  ],
+  manager: [
+    { id: 'orders', label: 'Orders' },
+    { id: 'menu', label: 'Menu' },
+    { id: 'reports', label: 'Reports' },
+  ],
+}
 
 function App() {
   const [session, setSession] = useState(null)
   const [role, setRole] = useState(null)
   const [checking, setChecking] = useState(true)
   const [cart, setCart] = useState([])
+  const [tab, setTab] = useState('orders')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -23,6 +39,7 @@ function App() {
       if (!newSession) {
         setCart([])
         setRole(null)
+        setTab('orders')
       }
     })
 
@@ -58,6 +75,7 @@ function App() {
   if (checking) return null
 
   const isStaff = role === 'staff' || role === 'manager'
+  const tabs = TABS[role] ?? []
 
   return (
     <div className="min-h-screen bg-amber-50 p-6">
@@ -80,8 +98,28 @@ function App() {
             <p className="text-sm text-gray-600">
               Signed in as {session.user.email} ({role})
             </p>
+
             {isStaff ? (
-              <StaffDashboard />
+              <>
+                <nav className="flex gap-2">
+                  {tabs.map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => setTab(t.id)}
+                      className={`px-4 py-2 rounded-lg ${
+                        tab === t.id ? 'bg-amber-700 text-white' : 'bg-white text-amber-800'
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </nav>
+
+                {tab === 'orders' && <StaffDashboard />}
+                {tab === 'availability' && <AvailabilityPanel />}
+                {tab === 'menu' && role === 'manager' && <ManagerMenu />}
+                {tab === 'reports' && role === 'manager' && <SalesReport />}
+              </>
             ) : (
               <>
                 <MyOrders />
