@@ -72,6 +72,8 @@ I designed the look myself before writing the code: **bold and playful, in the u
 - 🍰 Add menu items in Turkish, English, and Arabic
 - 🪄 One-click translate: type the Turkish name, get English and Arabic filled in
 - ✏️ Edit prices and categories
+- 🛠️ Build option groups (size, milk, extras) with extra prices, and turn them on per item
+- 🥜 Tag allergens and vegan / vegetarian items
 - 🗄️ Archive old items without losing order history
 - ⚙️ Set opening hours, slot length, orders per slot, and preparation time
 - 📈 Sales reports by date and hour: income, orders, average order, cancellations
@@ -146,6 +148,8 @@ src/
 │   ├── Receipt.jsx            🧾 Printable receipt
 │   ├── AvailabilityPanel.jsx  🚫 Staff sold-out toggles
 │   ├── ManagerMenu.jsx        🍰 Manager menu editor
+│   ├── ManagerOptions.jsx     🛠️ Option groups and choices
+│   ├── NameFields.jsx         🌍 3-language name inputs + translate
 │   ├── SalesReport.jsx        📊 Sales reports
 │   └── CafeSettings.jsx       ⚙️ Hours and slot settings
 ├── locales/
@@ -158,6 +162,7 @@ src/
 │   ├── localize.js            🌍 Picks the right language from the database
 │   ├── print.js               🖨️ Prints the receipt at its exact 80mm size
 │   ├── exportExcel.js         📥 Fills the Excel template with report data
+│   ├── translate.js           🪄 Machine translation for names
 │   └── errors.js              ⚠️ Translates database errors
 ├── i18n.js                    🌍 Language setup and RTL
 ├── theme.js                   🌙 Theme logic
@@ -258,6 +263,7 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] 📊 Sales reports by date and hour
 - [x] 📥 Excel dashboard export with charts, in 3 languages
 - [x] 🪄 Auto-translate menu names to English and Arabic
+- [x] 🛠️ Manager screen for item options, allergens, and diet tags
 - [x] 🎓 University-email-only ordering
 - [x] ☕ Item options (size, milk, extra shot) and allergen tags
 - [x] ⏰ Pickup time slots and "pause orders" for rush hours
@@ -270,10 +276,9 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] 🎫 "Order ready" ticket with a live progress tracker
 
 ### 🚧 In progress
-- [ ] 🛠️ Manager screen for item options
+- [ ] 🔢 Staff PIN system for shared terminals
 
 ### 📌 Planned
-- [ ] 🔢 Staff PIN system for shared terminals
 - [ ] 🐞 Bug report form and developer dashboard
 - [ ] 📜 Terms of use and KVKK privacy notice
 - [ ] 📱 Installable app with "order ready" notifications

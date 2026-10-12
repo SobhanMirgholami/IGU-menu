@@ -111,6 +111,7 @@
       "orders": "Siparişler",
       "availability": "Tükenenler",
       "menu": "Menü",
+      "options": "Seçenekler",
       "reports": "Raporlar",
       "settings": "Ayarlar"
     },
@@ -214,6 +215,37 @@
     },
     "translate": "İngilizce ve Arapçaya çevir",
     "translating": "Çevriliyor...",
-    "translateHint": "Otomatik çeviri. Kaydetmeden önce kontrol edin."
+    "translateHint": "Otomatik çeviri. Kaydetmeden önce kontrol edin.",
+    "allergensLabel": "Alerjenler",
+    "dietsLabel": "Beslenme",
+    "options": {
+      "intro": "Boy veya Süt gibi seçenek grupları. Grubu bir kez oluşturun, sonra istediğiniz ürünlerde açın.",
+      "addGroup": "Yeni seçenek grubu",
+      "editGroup": "Seçenek grubunu düzenle",
+      "required": "Müşteri seçmek zorunda",
+      "max": "En fazla kaç seçim",
+      "saveGroup": "Grubu kaydet",
+      "addChoice": "Seçenek ekle",
+      "editChoice": "Seçeneği düzenle",
+      "priceDelta": "Ek fiyat (TL)",
+      "priceHint": "Ek ücret yoksa 0. İndirim için eksi değer girin.",
+      "saveChoice": "Seçeneği kaydet",
+      "free": "Ek ücret yok",
+      "hidden": "Gizli",
+      "shown": "Görünür",
+      "usedOn": "Kullanıldığı ürünler",
+      "noChoices": "Henüz seçenek yok.",
+      "noGroups": "Henüz seçenek grubu yok.",
+      "warnNoChoice": "Bu grup zorunlu ama tüm seçenekler gizli, bu yüzden öğrenciler bu ürünleri sipariş edemez.",
+      "ruleOne": "Zorunlu · 1 seçim",
+      "ruleRequiredUpTo": "Zorunlu · en fazla {{count}}",
+      "ruleOptionalOne": "İsteğe bağlı · 1 seçim",
+      "ruleOptionalUpTo": "İsteğe bağlı · en fazla {{count}}",
+      "loading": "Yükleniyor...",
+      "errors": {
+        "max": "1 ile 10 arasında bir sayı girin.",
+        "priceDelta": "-1000 ile 1000 arasında bir ek fiyat girin."
+      }
+    }
   }
 }

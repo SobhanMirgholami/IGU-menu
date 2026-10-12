@@ -111,6 +111,7 @@
       "orders": "Orders",
       "availability": "Sold out",
       "menu": "Menu",
+      "options": "Options",
       "reports": "Reports",
       "settings": "Settings"
     },
@@ -214,6 +215,37 @@
     },
     "translate": "Translate to English & Arabic",
     "translating": "Translating...",
-    "translateHint": "Machine translation. Check it before saving."
+    "translateHint": "Machine translation. Check it before saving.",
+    "allergensLabel": "Allergens",
+    "dietsLabel": "Diet",
+    "options": {
+      "intro": "Option groups like Size or Milk. Make a group once, then turn it on for any item.",
+      "addGroup": "New option group",
+      "editGroup": "Edit option group",
+      "required": "Customers must choose",
+      "max": "Most they can choose",
+      "saveGroup": "Save group",
+      "addChoice": "Add choice",
+      "editChoice": "Edit choice",
+      "priceDelta": "Extra price (TL)",
+      "priceHint": "0 means no extra charge. Use a minus number for a discount.",
+      "saveChoice": "Save choice",
+      "free": "No extra",
+      "hidden": "Hidden",
+      "shown": "Shown",
+      "usedOn": "Used on",
+      "noChoices": "No choices yet.",
+      "noGroups": "No option groups yet.",
+      "warnNoChoice": "This group is required but every choice is hidden, so students can't order these items.",
+      "ruleOne": "Required · pick 1",
+      "ruleRequiredUpTo": "Required · up to {{count}}",
+      "ruleOptionalOne": "Optional · pick 1",
+      "ruleOptionalUpTo": "Optional · up to {{count}}",
+      "loading": "Loading...",
+      "errors": {
+        "max": "Choose a number from 1 to 10.",
+        "priceDelta": "Enter an extra price between -1000 and 1000."
+      }
+    }
   }
 }

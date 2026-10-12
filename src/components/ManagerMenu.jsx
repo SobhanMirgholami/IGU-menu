@@ -3,24 +3,45 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { formatPrice } from '../lib/format'
 import { pick } from '../lib/localize'
-import { GlobeIcon } from './icons'
+import NameFields, { inputClass, emptyNames, namesComplete, cleanNames } from './NameFields'
+import { CheckIcon } from './icons'
 
-const EMPTY_FORM = { tr: '', en: '', ar: '', price: '', category_id: '' }
+// Same lists as the database checks in 09_item_options.sql
+const ALLERGENS = ['gluten', 'milk', 'nuts', 'peanuts', 'egg', 'soy', 'sesame', 'fish']
+const DIETS = ['vegan', 'vegetarian']
 
-const inputClass =
-  'w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted focus:outline-none focus:border-brand dark:focus:border-pop'
+const EMPTY_FORM = { names: emptyNames, price: '', category_id: '', allergens: [], diet_tags: [] }
 
-async function translateText(text, target) {
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=tr|${target}`
-  const response = await fetch(url)
-  if (!response.ok) throw new Error('Translation failed')
+function TagPicker({ label, tags, selected, onChange, labelKey }) {
+  const { t } = useTranslation()
 
-  const json = await response.json()
-  const result = json?.responseData?.translatedText
-  if (json?.responseStatus !== 200 || !result || result.includes('MYMEMORY WARNING')) {
-    throw new Error('Translation failed')
-  }
-  return result
+  const toggle = (tag) =>
+    onChange(selected.includes(tag) ? selected.filter((x) => x !== tag) : [...selected, tag])
+
+  return (
+    <fieldset className="flex flex-col gap-2 min-w-0">
+      <legend className="text-sm font-semibold mb-1">{label}</legend>
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag) => {
+          const on = selected.includes(tag)
+          return (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => toggle(tag)}
+              aria-pressed={on}
+              className={`h-9 px-3 rounded-full border-2 text-sm font-bold flex items-center gap-1.5 ${
+                on ? 'bg-pop text-ink border-ink' : 'bg-surface text-fg border-line'
+              }`}
+            >
+              {on && <CheckIcon size={14} strokeWidth={3} />}
+              {t(`${labelKey}.${tag}`)}
+            </button>
+          )
+        })}
+      </div>
+    </fieldset>
+  )
 }
 
 export default function ManagerMenu() {
@@ -32,14 +53,12 @@ export default function ManagerMenu() {
   const [editingId, setEditingId] = useState(null)
   const [error, setError] = useState(null)
   const [saving, setSaving] = useState(false)
-  const [translating, setTranslating] = useState(false)
-  const [translated, setTranslated] = useState(false)
 
   async function load() {
     const [itemsResult, categoriesResult] = await Promise.all([
       supabase
         .from('menu_items')
-        .select('id, name, price, category_id, is_available, is_archived, sort_order')
+        .select('id, name, price, category_id, allergens, diet_tags, is_available, is_archived, sort_order')
         .order('category_id')
         .order('sort_order'),
       supabase.from('categories').select('id, name').order('sort_order'),
@@ -62,39 +81,20 @@ export default function ManagerMenu() {
   function startEdit(item) {
     setEditingId(item.id)
     setForm({
-      tr: item.name.tr,
-      en: item.name.en,
-      ar: item.name.ar,
+      names: { tr: item.name.tr, en: item.name.en, ar: item.name.ar },
       price: String(item.price),
       category_id: String(item.category_id),
+      allergens: item.allergens ?? [],
+      diet_tags: item.diet_tags ?? [],
     })
     setError(null)
-    setTranslated(false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   function resetForm() {
     setEditingId(null)
     setForm(EMPTY_FORM)
     setError(null)
-    setTranslated(false)
-  }
-
-  async function autoTranslate() {
-    const source = form.tr.trim()
-    if (!source) return
-
-    setTranslating(true)
-    setError(null)
-
-    try {
-      const [en, ar] = await Promise.all([translateText(source, 'en'), translateText(source, 'ar')])
-      setForm((prev) => ({ ...prev, en, ar }))
-      setTranslated(true)
-    } catch {
-      setError(t('manager.errors.translate'))
-    } finally {
-      setTranslating(false)
-    }
   }
 
   async function save(e) {
@@ -103,20 +103,16 @@ export default function ManagerMenu() {
 
     const price = Number(form.price)
 
-    if (!form.tr.trim() || !form.en.trim() || !form.ar.trim()) {
-      return setError(t('manager.errors.names'))
-    }
-    if (form.price === '' || !Number.isFinite(price) || price < 0) {
-      return setError(t('manager.errors.price'))
-    }
-    if (!form.category_id) {
-      return setError(t('manager.errors.category'))
-    }
+    if (!namesComplete(form.names)) return setError(t('manager.errors.names'))
+    if (form.price === '' || !Number.isFinite(price) || price < 0) return setError(t('manager.errors.price'))
+    if (!form.category_id) return setError(t('manager.errors.category'))
 
     const data = {
-      name: { tr: form.tr.trim(), en: form.en.trim(), ar: form.ar.trim() },
+      name: cleanNames(form.names),
       price,
       category_id: Number(form.category_id),
+      allergens: form.allergens,
+      diet_tags: form.diet_tags,
     }
 
     setSaving(true)
@@ -144,8 +140,8 @@ export default function ManagerMenu() {
       .eq('id', item.id)
       .select()
 
-    if (error) alert(error.message)
-    else if (!saved || saved.length === 0) alert(t('manager.errors.permission'))
+    if (error) setError(error.message)
+    else if (!saved || saved.length === 0) setError(t('manager.errors.permission'))
     else load()
   }
 
@@ -161,31 +157,7 @@ export default function ManagerMenu() {
           {editingId ? t('manager.editItem', { id: editingId }) : t('manager.addItem')}
         </h2>
 
-        <label className="flex flex-col gap-1 text-sm font-semibold">
-          {t('manager.nameTr')}
-          <input lang="tr" dir="ltr" value={form.tr} onChange={(e) => updateField('tr', e.target.value)} className={inputClass} />
-        </label>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={autoTranslate}
-            disabled={translating || !form.tr.trim()}
-            className="h-10 px-4 rounded-full border-2 border-ink bg-pop text-ink font-bold text-sm shadow-hard-sm flex items-center gap-2 disabled:opacity-50 disabled:shadow-none"
-          >
-            <GlobeIcon size={16} strokeWidth={2.4} />
-            {translating ? t('manager.translating') : t('manager.translate')}
-          </button>
-          {translated && <p className="text-sm font-semibold text-muted">{t('manager.translateHint')}</p>}
-        </div>
-        <label className="flex flex-col gap-1 text-sm font-semibold">
-          {t('manager.nameEn')}
-          <input lang="en" dir="ltr" value={form.en} onChange={(e) => updateField('en', e.target.value)} className={inputClass} />
-        </label>
-        <label className="flex flex-col gap-1 text-sm font-semibold">
-          {t('manager.nameAr')}
-          <input lang="ar" dir="rtl" value={form.ar} onChange={(e) => updateField('ar', e.target.value)} className={inputClass} />
-        </label>
+        <NameFields value={form.names} onChange={(names) => updateField('names', names)} />
 
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1 text-sm font-semibold">
@@ -216,6 +188,21 @@ export default function ManagerMenu() {
             </select>
           </label>
         </div>
+
+        <TagPicker
+          label={t('manager.allergensLabel')}
+          tags={ALLERGENS}
+          selected={form.allergens}
+          onChange={(tags) => updateField('allergens', tags)}
+          labelKey="allergens"
+        />
+        <TagPicker
+          label={t('manager.dietsLabel')}
+          tags={DIETS}
+          selected={form.diet_tags}
+          onChange={(tags) => updateField('diet_tags', tags)}
+          labelKey="diets"
+        />
 
         {error && <p className="text-sm font-semibold text-red-600 dark:text-red-400">{error}</p>}
 
@@ -255,6 +242,21 @@ export default function ManagerMenu() {
               </div>
               <p className="font-display font-extrabold text-brand dark:text-pop shrink-0">{formatPrice(item.price)}</p>
             </div>
+
+            {(item.allergens?.length > 0 || item.diet_tags?.length > 0) && (
+              <div className="flex flex-wrap gap-1.5">
+                {item.diet_tags?.map((tag) => (
+                  <span key={tag} className="text-xs font-semibold px-2 py-0.5 rounded-lg bg-chip">
+                    {t(`diets.${tag}`)}
+                  </span>
+                ))}
+                {item.allergens?.map((tag) => (
+                  <span key={tag} className="text-xs font-semibold px-2 py-0.5 rounded-lg border border-line">
+                    {t(`allergens.${tag}`)}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <div className="flex flex-wrap gap-2 text-sm">
               <button

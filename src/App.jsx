@@ -12,6 +12,7 @@ import LanguageSwitcher from './components/LanguageSwitcher'
 import ThemeToggle from './components/ThemeToggle'
 import StaffDashboard from './components/StaffDashboard'
 import ManagerMenu from './components/ManagerMenu'
+import ManagerOptions from './components/ManagerOptions'
 import AvailabilityPanel from './components/AvailabilityPanel'
 import SalesReport from './components/SalesReport'
 import CafeSettings from './components/CafeSettings'
@@ -19,7 +20,7 @@ import { ArrowIcon, LogoutIcon } from './components/icons'
 
 const TABS = {
   staff: ['orders', 'availability'],
-  manager: ['orders', 'menu', 'reports', 'settings'],
+  manager: ['orders', 'menu', 'options', 'reports', 'settings'],
 }
 
 function nameFromEmail(email) {
@@ -162,6 +163,7 @@ function App() {
           {tab === 'orders' && <StaffDashboard />}
           {tab === 'availability' && <AvailabilityPanel />}
           {tab === 'menu' && role === 'manager' && <ManagerMenu />}
+          {tab === 'options' && role === 'manager' && <ManagerOptions />}
           {tab === 'reports' && role === 'manager' && <SalesReport />}
           {tab === 'settings' && role === 'manager' && <CafeSettings />}
         </div>
