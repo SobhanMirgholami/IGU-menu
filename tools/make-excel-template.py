@@ -1,7 +1,8 @@
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
-from openpyxl.chart import BarChart, Reference
+from openpyxl.chart import BarChart, LineChart, Reference
 from openpyxl.chart.shapes import GraphicalProperties
+from openpyxl.drawing.spreadsheet_drawing import TwoCellAnchor, AnchorMarker
 import sys
 
 OUT = sys.argv[1]
@@ -11,27 +12,38 @@ BRAND_SOFT = 'DCE6FF'
 POP = 'FFC93C'
 INK = '0E1630'
 MONEY = '#,##0.00 "₺"'
+MONEY_AXIS = '#,##0 "₺"'
+GREEN = '1E9E6A'
 
 LABELS = {
     'Türkçe': dict(title='IGU Café · Satış raporu', period='Dönem', summary='Özet', income='Gelir',
                    orders='Sipariş sayısı', average='Ortalama sipariş', cancelled='İptal edilen',
                    hourly='Saatlik satışlar', hour='Saat', count='Sipariş', items='Satılan ürünler',
-                   item='Ürün', qty='Adet', chart1='Saatlere göre siparişler', chart2='En çok satan ürünler',
+                   item='Ürün', qty='Adet', chart1='Saatlere göre siparişler', chart2='En çok satan ürünler (adet)',
+                   chart3='Saatlere göre gelir', chart4='Ürünlere göre gelir', charts='Grafikler',
                    rtl=False),
     'English': dict(title='IGU Café · Sales report', period='Period', summary='Summary', income='Income',
                     orders='Orders', average='Average order', cancelled='Cancelled',
                     hourly='Sales by hour', hour='Hour', count='Orders', items='Items sold',
-                    item='Item', qty='Qty', chart1='Orders by hour', chart2='Best-selling items',
+                    item='Item', qty='Qty', chart1='Orders by hour', chart2='Best-selling items (qty)',
+                    chart3='Income by hour', chart4='Income by item', charts='Charts',
                     rtl=False),
     'العربية': dict(title='IGU Café · تقرير المبيعات', period='الفترة', summary='الملخص', income='الدخل',
                     orders='عدد الطلبات', average='متوسط الطلب', cancelled='الملغاة',
                     hourly='المبيعات حسب الساعة', hour='الساعة', count='الطلبات', items='المنتجات المباعة',
-                    item='المنتج', qty='الكمية', chart1='الطلبات حسب الساعة', chart2='المنتجات الأكثر مبيعًا',
+                    item='المنتج', qty='الكمية', chart1='الطلبات حسب الساعة', chart2='المنتجات الأكثر مبيعًا (الكمية)',
+                    chart3='الدخل حسب الساعة', chart4='الدخل حسب المنتج', charts='الرسوم البيانية',
                     rtl=True),
 }
 
-HOUR_FIRST, HOUR_LAST = 12, 35      # 24 rows, 00:00 .. 23:00
-ITEM_FIRST, ITEM_LAST = 39, 78      # up to 40 items
+# Rows 10-43 hold the 2x2 chart grid. The tables sit below it, because hiding
+# a row moves everything under it up: a chart anchored below a hidden row would slide.
+HOUR_TITLE = 45
+HOUR_HEAD = HOUR_TITLE + 1
+HOUR_FIRST, HOUR_LAST = HOUR_HEAD + 1, HOUR_HEAD + 24      # 00:00 .. 23:00
+ITEM_TITLE = HOUR_LAST + 2
+ITEM_HEAD = ITEM_TITLE + 1
+ITEM_FIRST, ITEM_LAST = ITEM_HEAD + 1, ITEM_HEAD + 40     # up to 40 items
 
 thin = Side(style='thin', color='C9D2EA')
 cell_border = Border(top=thin, bottom=thin, left=thin, right=thin)
@@ -39,6 +51,16 @@ base_font = Font(name='Arial', size=10, color=INK)
 bold_font = Font(name='Arial', size=10, bold=True, color=INK)
 section_font = Font(name='Arial', size=12, bold=True, color=BRAND)
 header_fill = PatternFill('solid', fgColor=BRAND_SOFT)
+
+
+def place(ws, chart, col1, row1, col2, row2):
+    """Pin a chart between two cells (0-based col/row). Both corners are fixed,
+    so right-to-left sheets mirror it correctly."""
+    anchor = TwoCellAnchor()
+    anchor._from = AnchorMarker(col=col1, row=row1)
+    anchor.to = AnchorMarker(col=col2, row=row2)
+    chart.anchor = anchor
+    ws.add_chart(chart)
 
 wb = Workbook()
 wb.remove(wb.active)
@@ -85,10 +107,10 @@ for sheet_name, L in LABELS.items():
         ws[f'B{row}'].border = cell_border
 
     # Hourly table
-    ws['A10'] = L['hourly']
-    ws['A10'].font = section_font
+    ws[f'A{HOUR_TITLE}'] = L['hourly']
+    ws[f'A{HOUR_TITLE}'].font = section_font
     for col, text in zip('ABC', [L['hour'], L['count'], L['income']]):
-        c = ws[f'{col}11']
+        c = ws[f'{col}{HOUR_HEAD}']
         c.value = text
         c.font = bold_font
         c.fill = header_fill
@@ -106,10 +128,10 @@ for sheet_name, L in LABELS.items():
                 ws[f'{col}{row}'].font = base_font
 
     # Items table
-    ws['A37'] = L['items']
-    ws['A37'].font = section_font
+    ws[f'A{ITEM_TITLE}'] = L['items']
+    ws[f'A{ITEM_TITLE}'].font = section_font
     for col, text in zip('ABC', [L['item'], L['qty'], L['income']]):
-        c = ws[f'{col}38']
+        c = ws[f'{col}{ITEM_HEAD}']
         c.value = text
         c.font = bold_font
         c.fill = header_fill
@@ -123,40 +145,78 @@ for sheet_name, L in LABELS.items():
         for col in 'ABC':
             ws[f'{col}{row}'].border = cell_border
 
-    # Chart 1: orders by hour
+    ws['A10'] = L['charts']
+    ws['A10'].font = section_font
+
+    def style_axes(chart):
+        chart.legend = None
+        chart.x_axis.delete = False
+        chart.y_axis.delete = False
+        chart.width, chart.height = 15, 8
+
+    hours = Reference(ws, min_col=1, min_row=HOUR_FIRST, max_row=HOUR_LAST)
+    items = Reference(ws, min_col=1, min_row=ITEM_FIRST, max_row=ITEM_LAST)
+
+    # 1. Orders by hour (columns)
     c1 = BarChart()
     c1.type = 'col'
     c1.title = L['chart1']
-    c1.legend = None
+    style_axes(c1)
     c1.y_axis.title = L['count']
-    c1.x_axis.title = L['hour']
     c1.y_axis.majorGridlines = None
-    c1.x_axis.delete = False
-    c1.y_axis.delete = False
-    c1.add_data(Reference(ws, min_col=2, min_row=11, max_row=HOUR_LAST), titles_from_data=True)
-    c1.set_categories(Reference(ws, min_col=1, min_row=HOUR_FIRST, max_row=HOUR_LAST))
+    c1.add_data(Reference(ws, min_col=2, min_row=HOUR_HEAD, max_row=HOUR_LAST), titles_from_data=True)
+    c1.set_categories(hours)
     c1.series[0].graphicalProperties = GraphicalProperties(solidFill=BRAND)
     c1.series[0].graphicalProperties.line.solidFill = INK
     c1.gapWidth = 60
-    c1.width, c1.height = 18, 8.5
-    ws.add_chart(c1, 'E2')
+    place(ws, c1, 0, 10, 6, 26)    # A11:F26
 
-    # Chart 2: best-selling items
-    c2 = BarChart()
-    c2.type = 'bar'
-    c2.title = L['chart2']
-    c2.legend = None
-    c2.x_axis.delete = False
-    c2.y_axis.delete = False
-    c2.y_axis.majorGridlines = None
-    c2.x_axis.scaling.orientation = 'maxMin'   # first item on top
-    c2.add_data(Reference(ws, min_col=2, min_row=38, max_row=ITEM_LAST), titles_from_data=True)
-    c2.set_categories(Reference(ws, min_col=1, min_row=ITEM_FIRST, max_row=ITEM_LAST))
-    c2.series[0].graphicalProperties = GraphicalProperties(solidFill=POP)
-    c2.series[0].graphicalProperties.line.solidFill = INK
-    c2.gapWidth = 50
-    c2.width, c2.height = 18, 8.5
-    ws.add_chart(c2, 'E20')
+    # 2. Income by hour (line with dots)
+    c2 = LineChart()
+    c2.title = L['chart3']
+    style_axes(c2)
+    c2.y_axis.title = L['income']
+    c2.y_axis.number_format = MONEY_AXIS
+    c2.add_data(Reference(ws, min_col=3, min_row=HOUR_HEAD, max_row=HOUR_LAST), titles_from_data=True)
+    c2.set_categories(hours)
+    line = c2.series[0]
+    line.graphicalProperties.line.solidFill = GREEN
+    line.graphicalProperties.line.width = 32000
+    line.marker.symbol = 'circle'
+    line.marker.size = 7
+    line.marker.graphicalProperties = GraphicalProperties(solidFill=POP)
+    line.marker.graphicalProperties.line.solidFill = INK
+    line.smooth = False
+    place(ws, c2, 6, 10, 15, 26)   # G11:O26
+
+    # 3. Best-selling items by quantity (bars)
+    c3 = BarChart()
+    c3.type = 'bar'
+    c3.title = L['chart2']
+    style_axes(c3)
+    c3.y_axis.majorGridlines = None
+    c3.x_axis.scaling.orientation = 'maxMin'   # first item on top
+    c3.add_data(Reference(ws, min_col=2, min_row=ITEM_HEAD, max_row=ITEM_LAST), titles_from_data=True)
+    c3.set_categories(items)
+    c3.series[0].graphicalProperties = GraphicalProperties(solidFill=POP)
+    c3.series[0].graphicalProperties.line.solidFill = INK
+    c3.gapWidth = 50
+    place(ws, c3, 0, 27, 6, 43)    # A28:F43
+
+    # 4. Income by item (bars)
+    c4 = BarChart()
+    c4.type = 'bar'
+    c4.title = L['chart4']
+    style_axes(c4)
+    c4.y_axis.majorGridlines = None
+    c4.y_axis.number_format = MONEY_AXIS
+    c4.x_axis.scaling.orientation = 'maxMin'
+    c4.add_data(Reference(ws, min_col=3, min_row=ITEM_HEAD, max_row=ITEM_LAST), titles_from_data=True)
+    c4.set_categories(items)
+    c4.series[0].graphicalProperties = GraphicalProperties(solidFill=GREEN)
+    c4.series[0].graphicalProperties.line.solidFill = INK
+    c4.gapWidth = 50
+    place(ws, c4, 6, 27, 15, 43)   # G28:O43
 
     ws.page_setup.orientation = 'landscape'
     ws.page_setup.fitToWidth = 1
