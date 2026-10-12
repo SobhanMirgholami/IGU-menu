@@ -88,13 +88,13 @@ export default function SalesReport() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg p-4 shadow-sm space-y-3">
+      <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4 space-y-3">
         <div className="flex flex-wrap gap-2">
           {PRESETS.map((preset) => (
             <button
               key={preset.label}
               onClick={() => applyPreset(preset)}
-              className="px-3 py-1 rounded-full border text-sm"
+              className="h-10 px-3 rounded-full border-2 border-line font-semibold text-sm"
             >
               {preset.label}
             </button>
@@ -104,15 +104,15 @@ export default function SalesReport() {
         <div className="grid grid-cols-2 gap-2">
           <label className="text-sm">
             From
-            <input type="date" value={from} max={to} onChange={(e) => setFrom(e.target.value)} className="w-full border rounded-lg p-2" />
+            <input type="date" value={from} max={to} onChange={(e) => setFrom(e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted" />
           </label>
           <label className="text-sm">
             To
-            <input type="date" value={to} min={from} onChange={(e) => setTo(e.target.value)} className="w-full border rounded-lg p-2" />
+            <input type="date" value={to} min={from} onChange={(e) => setTo(e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted" />
           </label>
           <label className="text-sm">
             Start hour
-            <select value={hourFrom} onChange={(e) => setHourFrom(e.target.value)} className="w-full border rounded-lg p-2">
+            <select value={hourFrom} onChange={(e) => setHourFrom(e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted">
               {HOURS.slice(0, 24).map((h) => (
                 <option key={h} value={h}>{pad(h)}</option>
               ))}
@@ -120,7 +120,7 @@ export default function SalesReport() {
           </label>
           <label className="text-sm">
             End hour
-            <select value={hourTo} onChange={(e) => setHourTo(e.target.value)} className="w-full border rounded-lg p-2">
+            <select value={hourTo} onChange={(e) => setHourTo(e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted">
               {HOURS.slice(1).map((h) => (
                 <option key={h} value={h}>{pad(h)}</option>
               ))}
@@ -131,12 +131,12 @@ export default function SalesReport() {
         <button
           onClick={() => loadReport()}
           disabled={loading}
-          className="w-full bg-amber-700 text-white rounded-lg p-2 disabled:opacity-50"
+          className="w-full h-12 bg-brand text-white border-2 border-ink rounded-2xl font-bold shadow-hard-sm disabled:opacity-50"
         >
           {loading ? 'Loading...' : 'Show report'}
         </button>
 
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {error && <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>}
       </div>
 
       {report && (
@@ -148,33 +148,33 @@ export default function SalesReport() {
             <Stat label="Cancelled" value={report.cancelled} />
           </div>
 
-          <div className="bg-white rounded-lg p-4 shadow-sm">
+          <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="font-semibold text-amber-800">Items sold</h3>
+              <h3 className="font-display font-bold text-lg">Items sold</h3>
               {report.items.length > 0 && (
-                <button onClick={exportCsv} className="text-sm px-3 py-1 rounded border">
+                <button onClick={exportCsv} className="text-sm h-10 px-3 rounded-full border-2 border-line font-semibold">
                   Export to Excel
                 </button>
               )}
             </div>
 
             {report.items.length === 0 ? (
-              <p className="text-sm text-gray-500">No sales in this period.</p>
+              <p className="text-sm text-muted">No sales in this period.</p>
             ) : (
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-gray-500">
+                  <tr className="text-start text-muted">
                     <th className="py-1">Item</th>
-                    <th className="py-1 text-right">Qty</th>
-                    <th className="py-1 text-right">Income</th>
+                    <th className="py-1 text-end">Qty</th>
+                    <th className="py-1 text-end">Income</th>
                   </tr>
                 </thead>
                 <tbody>
                   {report.items.map((item) => (
-                    <tr key={item.name} className="border-t">
+                    <tr key={item.name} className="border-t border-soft-line">
                       <td className="py-2">{item.name}</td>
-                      <td className="py-2 text-right">{item.quantity}</td>
-                      <td className="py-2 text-right">{formatPrice(item.income)}</td>
+                      <td className="py-2 text-end">{item.quantity}</td>
+                      <td className="py-2 text-end">{formatPrice(item.income)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -183,19 +183,19 @@ export default function SalesReport() {
           </div>
 
           {report.by_hour.length > 0 && (
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <h3 className="font-semibold text-amber-800 mb-3">Busiest hours</h3>
+            <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4">
+              <h3 className="font-display font-bold text-lg mb-3">Busiest hours</h3>
               <div className="space-y-1">
                 {report.by_hour.map((h) => (
                   <div key={h.hour} className="flex items-center gap-2 text-sm">
-                    <span className="w-12 text-gray-500">{pad(h.hour)}</span>
-                    <div className="flex-1 bg-amber-50 rounded">
+                    <span className="w-12 text-muted">{pad(h.hour)}</span>
+                    <div className="flex-1 bg-chip rounded">
                       <div
-                        className="bg-amber-600 h-5 rounded"
+                        className="bg-brand dark:bg-pop h-5 rounded"
                         style={{ width: `${(h.orders / maxHourOrders) * 100}%` }}
                       />
                     </div>
-                    <span className="w-8 text-right">{h.orders}</span>
+                    <span className="w-8 text-end">{h.orders}</span>
                   </div>
                 ))}
               </div>
@@ -209,9 +209,9 @@ export default function SalesReport() {
 
 function Stat({ label, value }) {
   return (
-    <div className="bg-white rounded-lg p-4 shadow-sm">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-xl font-bold text-amber-800">{value}</p>
+    <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4">
+      <p className="text-xs text-muted">{label}</p>
+      <p className="font-display text-2xl font-extrabold text-brand dark:text-pop">{value}</p>
     </div>
   )
 }

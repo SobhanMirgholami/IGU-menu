@@ -4,10 +4,10 @@ import { supabase } from '../lib/supabase'
 import { formatPrice, formatTime } from '../lib/format'
 
 const STATUS_STYLE = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  preparing: 'bg-blue-100 text-blue-800',
-  ready: 'bg-green-100 text-green-800',
-  cancelled: 'bg-red-100 text-red-800',
+  pending: 'bg-pop text-ink',
+  preparing: 'bg-brand-soft text-ink',
+  ready: 'bg-mint text-ink',
+  cancelled: 'bg-coral-soft text-ink',
 }
 
 export default function MyOrders() {
@@ -54,27 +54,32 @@ export default function MyOrders() {
   if (orders.length === 0) return null
 
   return (
-    <div className="space-y-2">
-      <h2 className="font-semibold text-amber-800">{t('myOrders.title')}</h2>
-      {orders.map((order) => (
-        <div
-          key={order.id}
-          className={`flex justify-between items-center bg-white rounded-lg p-4 shadow-sm ${
-            order.status === 'ready' ? 'ring-2 ring-green-500' : ''
-          }`}
-        >
-          <div>
-            <p className="text-xl font-bold">#{order.id}</p>
-            <p className="text-sm text-gray-500">
-              {formatPrice(order.total)}
-              {order.pickup_at && ` · ${t('myOrders.pickup', { time: formatTime(order.pickup_at) })}`}
-            </p>
+    <section className="flex flex-col gap-3">
+      <h2 className="font-display font-extrabold text-xl">{t('myOrders.title')}</h2>
+      {orders.map((order) => {
+        const ready = order.status === 'ready'
+        return (
+          <div
+            key={order.id}
+            className={`flex justify-between items-center gap-3 border-2 rounded-[20px] p-4 ${
+              ready
+                ? 'bg-mint-soft text-ink border-ink shadow-hard dark:bg-surface dark:text-fg dark:border-mint'
+                : 'bg-surface text-fg border-line shadow-hard-sm'
+            }`}
+          >
+            <div>
+              <p className="font-display font-extrabold text-2xl">#{order.id}</p>
+              <p className={`text-sm ${ready ? 'opacity-80' : 'text-muted'}`}>
+                {formatPrice(order.total)}
+                {order.pickup_at && ` · ${t('myOrders.pickup', { time: formatTime(order.pickup_at) })}`}
+              </p>
+            </div>
+            <span className={`text-sm font-bold px-3 py-1.5 rounded-full ${STATUS_STYLE[order.status]}`}>
+              {t(`myOrders.status.${order.status}`)}
+            </span>
           </div>
-          <span className={`text-sm px-3 py-1 rounded-full ${STATUS_STYLE[order.status]}`}>
-            {t(`myOrders.status.${order.status}`)}
-          </span>
-        </div>
-      ))}
-    </div>
+        )
+      })}
+    </section>
   )
 }

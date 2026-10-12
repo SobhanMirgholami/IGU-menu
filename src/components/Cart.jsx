@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { formatPrice, formatTime } from '../lib/format'
 import { pick } from '../lib/localize'
 import { translateError } from '../lib/errors'
+import { MinusIcon, PlusIcon } from './icons'
 
 export default function Cart({ cart, setCart }) {
   const { t, i18n } = useTranslation()
@@ -91,11 +92,14 @@ export default function Cart({ cart, setCart }) {
 
   if (orderId) {
     return (
-      <div className="bg-white rounded-lg p-6 shadow-sm text-center">
-        <p className="text-gray-600">{t('cart.placed')}</p>
-        <p className="text-4xl font-bold text-amber-800 my-2">#{orderId}</p>
-        <p className="text-sm text-gray-500 mb-4">{t('cart.showNumber')}</p>
-        <button onClick={() => setOrderId(null)} className="text-amber-800 underline text-sm">
+      <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard p-6 text-center flex flex-col items-center gap-1">
+        <p className="font-semibold text-muted">{t('cart.placed')}</p>
+        <p className="font-display font-extrabold text-6xl text-brand dark:text-pop my-1">#{orderId}</p>
+        <p className="text-sm text-muted mb-3">{t('cart.showNumber')}</p>
+        <button
+          onClick={() => setOrderId(null)}
+          className="h-11 px-5 rounded-full border-2 border-line bg-surface text-fg font-bold"
+        >
           {t('cart.newOrder')}
         </button>
       </div>
@@ -104,88 +108,119 @@ export default function Cart({ cart, setCart }) {
 
   if (!accepting) {
     return (
-      <div className="bg-amber-100 border border-amber-300 rounded-lg p-4 text-amber-900 text-sm">
+      <div className="bg-coral-soft text-ink border-2 border-ink rounded-[20px] p-4 font-semibold dark:bg-surface dark:text-fg dark:border-coral">
         {t('cart.paused')}
       </div>
     )
   }
 
   if (cart.length === 0) {
-    return <p className="text-gray-500 text-sm">{t('cart.empty')}</p>
+    return <p className="text-muted text-sm">{t('cart.empty')}</p>
   }
 
   const hasOpenSlot = slots.some((s) => s.remaining > 0)
 
-  function slotLabel(slot) {
-    if (slot.remaining <= 0) return `${formatTime(slot.slot_start)} ${t('cart.full')}`
-    if (slot.remaining <= 3) return `${formatTime(slot.slot_start)} ${t('cart.left', { count: slot.remaining })}`
-    return formatTime(slot.slot_start)
-  }
-
   return (
-    <div className="bg-white rounded-lg p-4 shadow-sm space-y-3">
-      <h2 className="font-semibold text-amber-800">{t('cart.title')}</h2>
+    <div className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4 flex flex-col gap-5">
+      <h2 className="font-display font-extrabold text-2xl">{t('cart.title')}</h2>
 
-      {cart.map((line) => (
-        <div key={line.key} className="flex items-center justify-between gap-2">
-          <div>
-            <p>{pick(line.name, lang)}</p>
-            {line.options.length > 0 && (
-              <p className="text-xs text-gray-500">
-                {line.options.map((o) => pick(o.name, lang)).join(lang === 'ar' ? '، ' : ', ')}
-              </p>
-            )}
-            <p className="text-xs text-gray-500">{formatPrice(line.unitPrice)}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => changeQuantity(line.key, -1)} className="w-8 h-8 rounded-full bg-amber-100">−</button>
-            <span className="w-6 text-center">{line.quantity}</span>
-            <button onClick={() => changeQuantity(line.key, 1)} className="w-8 h-8 rounded-full bg-amber-100">+</button>
-          </div>
-        </div>
-      ))}
+      <ul className="flex flex-col gap-3">
+        {cart.map((line) => (
+          <li key={line.key} className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-bold">{pick(line.name, lang)}</p>
+              {line.options.length > 0 && (
+                <p className="text-sm text-muted">
+                  {line.options.map((o) => pick(o.name, lang)).join(lang === 'ar' ? '، ' : ', ')}
+                </p>
+              )}
+              <p className="text-sm font-semibold text-brand dark:text-pop">{formatPrice(line.unitPrice)}</p>
+            </div>
+            <div className="flex items-center gap-1 border-2 border-line rounded-full p-0.5 shrink-0">
+              <button
+                onClick={() => changeQuantity(line.key, -1)}
+                aria-label="−"
+                className="w-10 h-10 rounded-full bg-chip text-fg flex items-center justify-center"
+              >
+                <MinusIcon size={18} strokeWidth={2.6} />
+              </button>
+              <span className="w-6 text-center font-extrabold">{line.quantity}</span>
+              <button
+                onClick={() => changeQuantity(line.key, 1)}
+                aria-label="+"
+                className="w-10 h-10 rounded-full bg-chip text-fg flex items-center justify-center"
+              >
+                <PlusIcon size={18} strokeWidth={2.6} />
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
 
-      <label className="block text-sm">
-        {t('cart.pickupTime')}
+      <fieldset className="flex flex-col gap-2.5">
+        <legend className="font-display font-bold text-lg mb-2.5">{t('cart.pickupTime')}</legend>
         {hasOpenSlot ? (
-          <select
-            value={pickupAt}
-            onChange={(e) => setPickupAt(e.target.value)}
-            className="w-full border rounded-lg p-2 mt-1"
-          >
-            {slots.map((slot) => (
-              <option key={slot.slot_start} value={slot.slot_start} disabled={slot.remaining <= 0}>
-                {slotLabel(slot)}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1">
+            {slots.map((slot) => {
+              const full = slot.remaining <= 0
+              const active = slot.slot_start === pickupAt
+              return (
+                <button
+                  key={slot.slot_start}
+                  type="button"
+                  disabled={full}
+                  onClick={() => setPickupAt(slot.slot_start)}
+                  aria-pressed={active}
+                  className={`shrink-0 min-w-20 h-14 px-3 rounded-2xl border-2 flex flex-col items-center justify-center ${
+                    full
+                      ? 'border-dashed border-soft-line text-muted'
+                      : active
+                      ? 'bg-brand text-white border-ink shadow-hard-sm'
+                      : 'bg-surface text-fg border-line'
+                  }`}
+                >
+                  <span className={`font-bold ${full ? 'line-through' : ''}`}>{formatTime(slot.slot_start)}</span>
+                  {full && <span className="text-[11px] font-semibold">{t('cart.full')}</span>}
+                  {!full && slot.remaining <= 3 && (
+                    <span className={`text-[11px] font-bold ${active ? 'text-pop' : 'text-red-600 dark:text-coral'}`}>
+                      {t('cart.left', { count: slot.remaining })}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
         ) : (
-          <p className="text-red-600 mt-1">{t('cart.noSlots')}</p>
+          <p className="text-sm font-semibold text-red-600 dark:text-red-400">{t('cart.noSlots')}</p>
         )}
-      </label>
+      </fieldset>
 
-      <textarea
-        placeholder={t('cart.notePlaceholder')}
-        maxLength={200}
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-        className="w-full border rounded-lg p-2 text-sm"
-      />
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="order-note" className="sr-only">{t('cart.notePlaceholder')}</label>
+        <textarea
+          id="order-note"
+          placeholder={t('cart.notePlaceholder')}
+          maxLength={200}
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          className="w-full min-h-20 rounded-2xl border-2 border-line bg-page text-fg placeholder:text-muted p-3 text-sm resize-none focus:outline-none focus:border-brand dark:focus:border-pop"
+        />
+      </div>
 
-      <div className="flex justify-between font-semibold">
-        <span>{t('cart.total')}</span>
-        <span>{formatPrice(total)}</span>
+      <div className="flex justify-between items-baseline">
+        <span className="font-bold">{t('cart.total')}</span>
+        <span className="font-display font-extrabold text-3xl">{formatPrice(total)}</span>
       </div>
 
       <button
         onClick={placeOrder}
         disabled={loading || !pickupAt}
-        className="w-full bg-amber-700 text-white rounded-lg p-3 disabled:opacity-50"
+        className="w-full h-14 rounded-2xl border-2 border-ink bg-pop text-ink font-display font-extrabold text-lg shadow-hard disabled:opacity-50 disabled:shadow-none"
       >
         {loading ? t('cart.placing') : t('cart.placeOrder')}
       </button>
 
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+      {error && <p className="text-sm font-semibold text-red-600 dark:text-red-400">{error}</p>}
     </div>
   )
 }

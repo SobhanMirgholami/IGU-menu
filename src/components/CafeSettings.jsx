@@ -55,24 +55,24 @@ export default function CafeSettings() {
     else setMessage({ type: 'success', text: 'Settings saved.' })
   }
 
-  if (!form) return <p className="text-gray-500">Loading...</p>
+  if (!form) return <p className="text-muted">Loading...</p>
 
   return (
-    <form onSubmit={save} className="bg-white rounded-lg p-4 shadow-sm space-y-3">
-      <h2 className="font-semibold text-amber-800">Café settings</h2>
+    <form onSubmit={save} className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4 space-y-3">
+      <h2 className="font-display font-bold text-lg">Café settings</h2>
 
       <div className="grid grid-cols-2 gap-3">
         <label className="text-sm">
           Opens at
-          <input type="time" value={form.open_time} onChange={(e) => updateField('open_time', e.target.value)} className="w-full border rounded-lg p-2" />
+          <input type="time" value={form.open_time} onChange={(e) => updateField('open_time', e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted" />
         </label>
         <label className="text-sm">
           Closes at
-          <input type="time" value={form.close_time} onChange={(e) => updateField('close_time', e.target.value)} className="w-full border rounded-lg p-2" />
+          <input type="time" value={form.close_time} onChange={(e) => updateField('close_time', e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted" />
         </label>
         <label className="text-sm">
           Slot length (minutes)
-          <select value={form.slot_minutes} onChange={(e) => updateField('slot_minutes', e.target.value)} className="w-full border rounded-lg p-2">
+          <select value={form.slot_minutes} onChange={(e) => updateField('slot_minutes', e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted">
             {SLOT_LENGTHS.map((m) => (
               <option key={m} value={m}>{m}</option>
             ))}
@@ -80,21 +80,21 @@ export default function CafeSettings() {
         </label>
         <label className="text-sm">
           Orders per slot
-          <input type="number" min="1" max="200" value={form.max_orders_per_slot} onChange={(e) => updateField('max_orders_per_slot', e.target.value)} className="w-full border rounded-lg p-2" />
+          <input type="number" min="1" max="200" value={form.max_orders_per_slot} onChange={(e) => updateField('max_orders_per_slot', e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted" />
         </label>
         <label className="text-sm col-span-2">
           Minimum preparation time (minutes)
-          <input type="number" min="0" max="120" value={form.min_lead_minutes} onChange={(e) => updateField('min_lead_minutes', e.target.value)} className="w-full border rounded-lg p-2" />
+          <input type="number" min="0" max="120" value={form.min_lead_minutes} onChange={(e) => updateField('min_lead_minutes', e.target.value)} className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted" />
         </label>
       </div>
 
       {message && (
-        <p className={`text-sm ${message.type === 'error' ? 'text-red-600' : 'text-green-700'}`}>
+        <p className={`text-sm ${message.type === 'error' ? 'text-red-600 dark:text-red-400' : 'text-green-700 dark:text-green-400'}`}>
           {message.text}
         </p>
       )}
 
-      <button disabled={saving} className="w-full bg-amber-700 text-white rounded-lg p-2 disabled:opacity-50">
+      <button disabled={saving} className="w-full h-12 bg-brand text-white border-2 border-ink rounded-2xl font-bold shadow-hard-sm disabled:opacity-50">
         {saving ? 'Saving...' : 'Save settings'}
       </button>
     </form>

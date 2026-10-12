@@ -120,9 +120,9 @@ export default function ManagerMenu() {
     <div className="space-y-6">
       <form
         onSubmit={save}
-        className="bg-white rounded-lg p-4 shadow-sm space-y-3"
+        className="bg-surface border-2 border-line rounded-[22px] shadow-hard-sm p-4 space-y-3"
       >
-        <h2 className="font-semibold text-amber-800">
+        <h2 className="font-display font-bold text-lg">
           {editingId ? `Edit item #${editingId}` : "Add new item"}
         </h2>
 
@@ -130,20 +130,20 @@ export default function ManagerMenu() {
           placeholder="Name (Turkish)"
           value={form.tr}
           onChange={(e) => updateField("tr", e.target.value)}
-          className="w-full border rounded-lg p-2"
+          className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted"
         />
         <input
           placeholder="Name (English)"
           value={form.en}
           onChange={(e) => updateField("en", e.target.value)}
-          className="w-full border rounded-lg p-2"
+          className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted"
         />
         <input
           placeholder="Name (Arabic)"
           dir="rtl"
           value={form.ar}
           onChange={(e) => updateField("ar", e.target.value)}
-          className="w-full border rounded-lg p-2"
+          className="w-full h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted"
         />
 
         <div className="flex gap-2">
@@ -154,12 +154,12 @@ export default function ManagerMenu() {
             placeholder="Price (TL)"
             value={form.price}
             onChange={(e) => updateField("price", e.target.value)}
-            className="flex-1 border rounded-lg p-2"
+            className="flex-1 h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted"
           />
           <select
             value={form.category_id}
             onChange={(e) => updateField("category_id", e.target.value)}
-            className="flex-1 border rounded-lg p-2"
+            className="flex-1 h-11 px-3 rounded-xl border-2 border-line bg-page text-fg placeholder:text-muted"
           >
             <option value="">Category</option>
             {categories.map((c) => (
@@ -170,12 +170,12 @@ export default function ManagerMenu() {
           </select>
         </div>
 
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {error && <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>}
 
         <div className="flex gap-2">
           <button
             disabled={saving}
-            className="flex-1 bg-amber-700 text-white rounded-lg p-2 disabled:opacity-50"
+            className="flex-1 h-12 bg-brand text-white border-2 border-ink rounded-2xl font-bold shadow-hard-sm disabled:opacity-50"
           >
             {saving ? "Saving..." : editingId ? "Save changes" : "Add item"}
           </button>
@@ -183,7 +183,7 @@ export default function ManagerMenu() {
             <button
               type="button"
               onClick={resetForm}
-              className="px-4 rounded-lg border"
+              className="px-4 rounded-2xl border-2 border-line font-bold"
             >
               Cancel
             </button>
@@ -195,12 +195,12 @@ export default function ManagerMenu() {
         {items.map((item) => (
           <li
             key={item.id}
-            className={`bg-white rounded-lg p-3 shadow-sm ${item.is_archived ? "opacity-50" : ""}`}
+            className={`bg-surface border-2 border-line rounded-[20px] shadow-hard-sm p-3 ${item.is_archived ? "opacity-50" : ""}`}
           >
             <div className="flex justify-between">
               <div>
                 <p className="font-medium">{item.name.tr}</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted">
                   {categoryName(item.category_id)} · {item.name.en} ·{" "}
                   {item.name.ar}
                 </p>
@@ -211,23 +211,23 @@ export default function ManagerMenu() {
             <div className="flex flex-wrap gap-2 mt-2 text-sm">
               <button
                 onClick={() => startEdit(item)}
-                className="px-3 py-1 rounded border"
+                className="h-10 px-3 rounded-full border-2 border-line font-semibold"
               >
                 Edit
               </button>
               <button
                 onClick={() => toggle(item, "is_available")}
-                className={`px-3 py-1 rounded border ${
+                className={`h-10 px-3 rounded-full border-2 border-line font-semibold ${
                   item.is_available
-                    ? "text-green-700 border-green-600"
-                    : "text-red-600 border-red-300"
+                    ? "text-green-700 dark:text-green-400 border-green-600"
+                    : "text-red-600 dark:text-red-400 border-red-300"
                 }`}
               >
                 {item.is_available ? "Available" : "Sold out"}
               </button>
               <button
                 onClick={() => toggle(item, "is_archived")}
-                className="px-3 py-1 rounded border"
+                className="h-10 px-3 rounded-full border-2 border-line font-semibold"
               >
                 {item.is_archived ? "Restore" : "Archive"}
               </button>
