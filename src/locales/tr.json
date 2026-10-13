@@ -331,11 +331,11 @@
     "language": "Dil",
     "accept": "<terms>Kullanım Koşulları</terms>’nı kabul ediyorum ve <privacy>Aydınlatma Metni</privacy>’ni okudum.",
     "mustAccept": "Lütfen önce Kullanım Koşulları’nı kabul etmek için kutuyu işaretle.",
-    "gateTitle": "Başlamadan önce",
-    "gateText": "IGU Café’yi kullanmak için Kullanım Koşulları’nı ve Aydınlatma Metni’ni okuyup kabul etmelisin. Bunu yalnızca bir kez yaparsın.",
-    "saving": "Kaydediliyor...",
-    "decline": "Şimdi değil, çıkış yap",
-    "continue": "Kabul et ve devam et"
+    "readFirst": "Önce iki metni de açıp sonuna kadar oku. Sonra kabul edebilirsin.",
+    "acceptPlain": "Kullanım Koşulları’nı ve Aydınlatma Metni’ni okudum, kabul ediyorum.",
+    "readToEnd": "Okuduğunu onaylamak için sonuna kadar kaydır.",
+    "readComplete": "Sonuna kadar okudun.",
+    "back": "Geri dön"
   },
   "bugs": {
     "open": "Sorun bildir",

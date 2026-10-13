@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { formatPrice, formatTime } from '../lib/format'
 import { pick } from '../lib/localize'
 import { translateError } from '../lib/errors'
-import { TERMS_VERSION } from '../lib/legal'
+import { LEGAL_PAGES, TERMS_VERSION, hasRead, onReadChange, rememberOnThisDevice } from '../lib/legal'
 import { askForNotifications, notificationsAllowed, notificationsSupported, subscribeToPush } from '../lib/pwa'
 import { MinusIcon, PlusIcon } from './icons'
 
@@ -20,6 +20,8 @@ export default function Cart({ cart, setCart }) {
   const [accepting, setAccepting] = useState(true)
   const [termsAccepted, setTermsAccepted] = useState(null) // null = still checking
   const [agree, setAgree] = useState(false)
+  const [readAll, setReadAll] = useState(() => LEGAL_PAGES.every(hasRead))
+  useEffect(() => onReadChange(() => setReadAll(LEGAL_PAGES.every(hasRead))), [])
   const [notify, setNotify] = useState(() =>
     !notificationsSupported() ? 'unsupported' : notificationsAllowed() ? 'granted' : Notification.permission
   )
@@ -90,10 +92,12 @@ export default function Cart({ cart, setCart }) {
     setError(null)
 
     if (!termsAccepted) {
+      if (!readAll) return setError(t('legal.readFirst'))
       if (!agree) return setError(t('cart.mustAgree'))
       const { error } = await supabase.rpc('accept_terms', { p_version: TERMS_VERSION })
       // PGRST202 = database/14_terms.sql not run yet: nothing to save, so just continue
       if (error && error.code !== 'PGRST202') return setError(error.message)
+      rememberOnThisDevice()
       setTermsAccepted(true)
     }
 
@@ -253,11 +257,15 @@ export default function Cart({ cart, setCart }) {
         <span className="font-display font-extrabold text-3xl">{formatPrice(total)}</span>
       </div>
 
+      {termsAccepted === false && !readAll && (
+        <p className="text-sm font-semibold text-muted">{t('legal.readFirst')}</p>
+      )}
       {termsAccepted === false && (
-        <label className="flex items-start gap-3 text-sm cursor-pointer">
+        <label className={`flex items-start gap-3 text-sm ${readAll ? 'cursor-pointer' : ''}`}>
           <input
             type="checkbox"
             checked={agree}
+            disabled={!readAll}
             onChange={(e) => {
               setAgree(e.target.checked)
               setError(null)

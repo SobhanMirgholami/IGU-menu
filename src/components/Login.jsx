@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation, Trans } from 'react-i18next'
 import { supabase } from '../lib/supabase'
-import { rememberAgreement } from '../lib/legal'
+import { LEGAL_PAGES, acceptedOnThisDevice, hasRead, onReadChange, rememberAgreement } from '../lib/legal'
 
 const inputClass =
   'w-full h-14 px-4 rounded-2xl border-2 border-line bg-page text-fg placeholder:text-muted font-semibold focus:outline-none focus:border-brand dark:focus:border-pop'
@@ -14,6 +14,15 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
   const [agree, setAgree] = useState(false)
+  // New on this phone? Then the terms must be read to the end and accepted before the code is sent
+  const [isNew] = useState(() => !acceptedOnThisDevice())
+  const [read, setRead] = useState(() => Object.fromEntries(LEGAL_PAGES.map((p) => [p, hasRead(p)])))
+  const readAll = LEGAL_PAGES.every((p) => read[p])
+
+  useEffect(
+    () => onReadChange(() => setRead(Object.fromEntries(LEGAL_PAGES.map((p) => [p, hasRead(p)])))),
+    []
+  )
   const [step, setStep] = useState('email')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -31,8 +40,11 @@ export default function Login() {
   async function sendCode(e) {
     e.preventDefault()
     setError(null)
-    if (!agree) return setError(t('legal.mustAccept'))
-    rememberAgreement() // saved to the database right after sign-in
+    if (isNew) {
+      if (!readAll) return setError(t('legal.readFirst'))
+      if (!agree) return setError(t('legal.mustAccept'))
+      rememberAgreement() // saved to the database right after sign-in
+    }
     setLoading(true)
 
     const { error } = await supabase.auth.signInWithOtp({ email: cleanEmail })
@@ -82,27 +94,39 @@ export default function Login() {
               })}
             </p>
           )}
-          <label className="flex items-start gap-3 text-sm cursor-pointer">
-            <input
-              type="checkbox"
-              checked={agree}
-              onChange={(e) => {
-                setAgree(e.target.checked)
-                setError(null)
-              }}
-              className="mt-0.5 w-5 h-5 shrink-0 accent-brand"
-            />
-            <span>
-              <Trans
-                i18nKey="legal.accept"
-                components={{
-                  terms: <a href="#terms" className="font-bold underline underline-offset-2" />,
-                  privacy: <a href="#privacy" className="font-bold underline underline-offset-2" />,
-                }}
-              />
-            </span>
-          </label>
-          <button disabled={loading || !agree} className={primaryButton}>
+          {isNew && (
+            <div className="flex flex-col gap-3 rounded-2xl border-2 border-soft-line p-3">
+              <p className="text-sm font-semibold">{t('legal.readFirst')}</p>
+              <div className="grid grid-cols-2 gap-2">
+                {LEGAL_PAGES.map((p) => (
+                  <a
+                    key={p}
+                    href={`#${p}`}
+                    className={`min-h-11 px-3 py-2 rounded-xl border-2 text-sm font-bold flex items-center justify-center gap-1.5 text-center ${
+                      read[p] ? 'bg-mint text-ink border-ink' : 'bg-surface text-fg border-line'
+                    }`}
+                  >
+                    <span aria-hidden="true">{read[p] ? '✓' : p === 'terms' ? '📄' : '🔒'}</span>
+                    {t(`legal.${p}`)}
+                  </a>
+                ))}
+              </div>
+              <label className={`flex items-start gap-3 text-sm ${readAll ? 'cursor-pointer' : 'opacity-50'}`}>
+                <input
+                  type="checkbox"
+                  checked={agree}
+                  disabled={!readAll}
+                  onChange={(e) => {
+                    setAgree(e.target.checked)
+                    setError(null)
+                  }}
+                  className="mt-0.5 w-5 h-5 shrink-0 accent-brand"
+                />
+                <span>{t('legal.acceptPlain')}</span>
+              </label>
+            </div>
+          )}
+          <button disabled={loading || (isNew && !(readAll && agree))} className={primaryButton}>
             {loading ? t('login.sending') : t('login.sendCode')}
           </button>
         </form>

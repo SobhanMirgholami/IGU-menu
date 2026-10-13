@@ -331,11 +331,11 @@
     "language": "Language",
     "accept": "I accept the <terms>Terms of Use</terms> and have read the <privacy>Privacy Notice</privacy>.",
     "mustAccept": "Please tick the box to accept the Terms of Use first.",
-    "gateTitle": "Before you start",
-    "gateText": "To use IGU Café, please read and accept our Terms of Use and Privacy Notice. You only need to do this once.",
-    "saving": "Saving...",
-    "decline": "Not now, sign me out",
-    "continue": "Accept and continue"
+    "readFirst": "First open both texts and read each one to the end. Then you can accept.",
+    "acceptPlain": "I have read and accept the Terms of Use and the Privacy Notice.",
+    "readToEnd": "Scroll to the end to confirm you’ve read it.",
+    "readComplete": "You’ve read it to the end.",
+    "back": "Back"
   },
   "bugs": {
     "open": "Report a problem",

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LEGAL_CONTENT } from '../legal/content'
-import { LEGAL } from '../lib/legal'
+import { LEGAL, hasRead, markRead } from '../lib/legal'
 
 const PAGES = ['terms', 'privacy']
 const LANGS = [
@@ -21,6 +21,27 @@ export default function LegalPage() {
   const [page, setPage] = useState(readHash)
   // The text can be read in any language, whatever language the app is set to
   const [docLang, setDocLang] = useState(i18n.resolvedLanguage)
+  const [read, setRead] = useState(false)
+  const scroller = useRef(null)
+
+  // Reached the bottom? Then this document counts as read (in whichever language)
+  function checkBottom() {
+    const el = scroller.current
+    if (!el || !page) return
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 24) {
+      markRead(page)
+      setRead(true)
+    }
+  }
+
+  // New document or language: start at the top
+  useEffect(() => {
+    if (!page) return
+    setRead(hasRead(page))
+    scroller.current?.scrollTo(0, 0)
+    const id = setTimeout(checkBottom, 300) // short text that fits the screen counts as read
+    return () => clearTimeout(id)
+  }, [page, docLang]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (page) setDocLang(i18n.resolvedLanguage)
@@ -56,7 +77,7 @@ export default function LegalPage() {
   const fill = (text) => text.replaceAll('{controller}', LEGAL.controller).replaceAll('{contact}', contact)
 
   return (
-    <div className="fixed inset-0 z-50 bg-page text-fg overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="legal-title">
+    <div ref={scroller} onScroll={checkBottom} className="fixed inset-0 z-50 bg-page text-fg overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="legal-title">
       <div className="max-w-2xl mx-auto px-5 py-6 flex flex-col gap-5">
         <div className="flex items-center justify-between gap-3 sticky top-0 bg-page py-2">
           <div className="flex gap-2 min-w-0">
@@ -118,6 +139,19 @@ export default function LegalPage() {
             ))}
           </section>
         ))}
+        </div>
+
+        <div
+          className={`rounded-2xl border-2 p-4 flex flex-wrap items-center justify-between gap-3 ${
+            read ? 'border-ink bg-mint text-ink' : 'border-dashed border-line text-muted'
+          }`}
+        >
+          <p className="font-bold">{read ? `✓ ${t('legal.readComplete')}` : t('legal.readToEnd')}</p>
+          {read && (
+            <button onClick={close} className="h-10 px-4 rounded-full border-2 border-ink bg-surface text-fg font-bold text-sm">
+              {t('legal.back')}
+            </button>
+          )}
         </div>
       </div>
     </div>
