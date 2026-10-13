@@ -335,7 +335,10 @@
     "acceptPlain": "I have read and accept the Terms of Use and the Privacy Notice.",
     "readToEnd": "Scroll to the end to confirm you’ve read it.",
     "readComplete": "You’ve read it to the end.",
-    "back": "Back"
+    "back": "Back",
+    "welcomeTitle": "Welcome! 👋",
+    "welcomeText": "{{email}} is new here. Before we send your code, please read our Terms of Use and Privacy Notice.",
+    "acceptAndSend": "Accept and send code"
   },
   "bugs": {
     "open": "Report a problem",

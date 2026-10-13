@@ -58,7 +58,7 @@ I designed the look myself before writing the code: **bold and playful, in the u
 - 📳 Your phone vibrates when your order is ready
 - 🔔 A notification pops up when your order is ready, **even if the app is closed** (Web Push)
 - 📱 Install it on your home screen like a real app
-- 📜 Terms of Use and a KVKK privacy notice in all three languages, accepted once before the first order
+- 📜 Terms of Use and a KVKK privacy notice in all three languages: **new** students read both to the end and accept before their login code is sent (returning students skip it)
 - 🐞 "Report a problem" in one tap: the page, language, and device are attached automatically
 - 🌍 Turkish, English, or Arabic, with a full right-to-left layout
 - 🌙 Light and dark mode that follows your phone, or your own choice
@@ -210,7 +210,8 @@ database/
 ├── 12_staff_pins.sql         Staff PINs, sessions, activity log
 ├── 13_bug_reports.sql        Bug reports with a daily limit
 ├── 14_terms.sql              Terms acceptance, checked before every order
-└── 15_push.sql               Phones that get "order ready" pushes
+├── 15_push.sql               Phones that get "order ready" pushes
+└── 16_terms_check.sql       Is this email new? (terms shown only to new students)
 
 supabase/functions/
 └── notify-order-ready/        📨 Edge Function that sends the Web Push
@@ -241,7 +242,7 @@ npm install
 
 **2. Set up Supabase**
 - Create a project at [supabase.com](https://supabase.com)
-- Run the files in `database/` **in order** (01 → 15) in the SQL Editor
+- Run the files in `database/` **in order** (01 → 16) in the SQL Editor
 - Connect an SMTP provider and add `{{ .Token }}` to the **Magic Link** and **Confirm signup** email templates
 
 **3. Allow your university's email domain**

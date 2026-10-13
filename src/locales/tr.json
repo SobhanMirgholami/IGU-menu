@@ -335,7 +335,10 @@
     "acceptPlain": "Kullanım Koşulları’nı ve Aydınlatma Metni’ni okudum, kabul ediyorum.",
     "readToEnd": "Okuduğunu onaylamak için sonuna kadar kaydır.",
     "readComplete": "Sonuna kadar okudun.",
-    "back": "Geri dön"
+    "back": "Geri dön",
+    "welcomeTitle": "Hoş geldin! 👋",
+    "welcomeText": "{{email}} burada yeni. Kodunu göndermeden önce lütfen Kullanım Koşulları’nı ve Aydınlatma Metni’ni oku.",
+    "acceptAndSend": "Kabul et ve kodu gönder"
   },
   "bugs": {
     "open": "Sorun bildir",
