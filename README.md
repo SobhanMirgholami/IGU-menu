@@ -350,12 +350,20 @@ Use `'manager'` for the café manager, and `'developer'` for someone who should 
 
 ---
 
+## 📜 License
+
+This project has its own license. **Please read [LICENSE.md](LICENSE.md) before using the code.**
+
+- ✅ You can copy, change and use it **if you credit me** or **get my permission**
+- 🚫 You can't claim it as your own work
+
+---
+
 ## 👨‍💻 About me
 
 Hi, I'm **Sobhan Mirgholami**, a Computer Engineering student at **Istanbul Gelişim University**. I love programming, design, and solving real problems I see around me. This project started with a long coffee line. ☕
 
-<!-- Add your links here when ready -->
-<!-- [LinkedIn](https://linkedin.com/in/your-profile) · [GitHub](https://github.com/your-username) -->
+[Portfolio](https://sobhan-cosmo.vercel.app) · [LinkedIn](https://www.linkedin.com/in/sobhan-mirgholami-a2093b417/) · [GitHub](https://github.com/SobhanMirgholami)
 
 ---
 
