@@ -1,0 +1,13 @@
+{
+  "name": "igu-menu-demo-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "login:student": "node record.mjs login student",
+    "login:manager": "node record.mjs login manager",
+    "record": "node record.mjs record"
+  },
+  "dependencies": {
+    "playwright-core": "1.55.0"
+  }
+}

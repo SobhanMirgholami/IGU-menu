@@ -25,3 +25,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+# demo video recorder: saved logins and recordings
+tools/demo-video/.auth/
+tools/demo-video/out/

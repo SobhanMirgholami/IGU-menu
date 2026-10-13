@@ -93,7 +93,7 @@ I designed the look myself before writing the code: **bold and playful, in the u
 - 🖨️ Print reports straight from the browser
 - 👥 Add staff, set or reset PINs, and turn people off without losing their history
 - 🕵️ Activity log by day, shift, and person: who started, finished, cancelled, or took payment for each order
-- 🐞 Bug reports with status (new → working on it → fixed) and private notes
+- 🐞 Bug reports with status (new → working on it → fixed) and private notes (also a separate **developer** role that sees only bug reports)
 - 🌍 Manager screens in all three languages
 
 ---
@@ -103,7 +103,7 @@ I designed the look myself before writing the code: **bold and playful, in the u
 I treated security as a core feature, not an afterthought:
 
 - 🛡️ **Row Level Security** on every table: students only ever see their own orders
-- 👥 **Role-based access:** student, staff, and manager each see only what their job needs
+- 👥 **Role-based access:** student, staff, manager, and developer each see only what their job needs
 - 💰 **Server-side pricing:** totals and option prices are calculated in the database, so nobody can fake a price
 - 🚪 **One door for orders:** a validated database function is the only way to create one
 - ✅ **Option rules in the database:** no two sizes, no missing required choices, no oat milk on a croissant
@@ -114,6 +114,10 @@ I treated security as a core feature, not an afterthought:
 - 🕵️ **Full order history:** every change is logged with who, when, and which shift
 - 🔢 **Hashed staff PINs:** stored with bcrypt, easy PINs like 1234 refused, 5 wrong tries lock that person for 5 minutes
 - ⏱️ **Staff sessions expire** after 30 idle minutes or 12 hours, and are checked on the server for every action
+- 📜 **Terms checked in the database:** an order is refused until the current Terms of Use are accepted
+- 🐞 **Bug report limits:** max 5 reports per person per day, and only the developer and manager can read them
+- 🔔 **Safe push notifications:** only staff can trigger one, each order is pushed at most once, and the private VAPID key lives only in Supabase secrets
+- 📵 **Shared phones:** signing out removes that phone from push, so it never gets the previous student's notifications
 - 🧊 **Frozen prices:** each order saves its prices and options, so menu changes never rewrite history
 - 🗃️ **Nothing is deleted:** menu items are archived, so old orders and reports stay correct
 
@@ -272,14 +276,18 @@ npm run dev
 ```
 
 **6. Turn on push notifications (optional)**
+
+Make a key pair and save it in a `*.local` file, which git ignores:
 ```bash
 npx web-push generate-vapid-keys
 ```
 - Put the **public** key in `VAPID_PUBLIC_KEY` in `src/lib/pwa.js`
-- In Supabase → **Edge Functions**, deploy `supabase/functions/notify-order-ready`
+- In Supabase → **Edge Functions → Deploy a new function → Via Editor**, name it **exactly** `notify-order-ready` and paste in `supabase/functions/notify-order-ready/index.ts` (the app calls it by this name)
 - In Supabase → **Edge Functions → Secrets**, add `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, and `VAPID_SUBJECT` (`mailto:you@example.com`)
 
 > 🔐 The **private** key only ever goes into Supabase secrets. Never in the code, never on GitHub.
+
+> 📱 Android gets pushes in the browser. iPhone (iOS 16.4+) only after the app is **added to the Home Screen**.
 
 **7. Assign roles**
 
@@ -288,7 +296,7 @@ Sign in once with the person's email, then run:
 insert into user_roles (user_id, role)
 select id, 'staff' from auth.users where email = 'staff@example.com';
 ```
-Use `'manager'` instead of `'staff'` for the café manager.
+Use `'manager'` for the café manager, and `'developer'` for someone who should only see bug reports.
 
 > 💡 Give `'staff'` to **one shared café account** (the counter computer), not to each person. People are added in the manager's **Staff** tab and unlock the terminal with their own PIN.
 
@@ -313,7 +321,7 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [x] 🐞 Bug report form and developer dashboard
 - [x] 📜 Terms of use and KVKK privacy notice
 - [x] 📱 Installable app with "order ready" notifications
-- [x] 🔔 Web Push, so the notification arrives even when the app is closed
+- [x] 🔔 Web Push, so the notification arrives even when the app is closed (server side tested ✅)
 - [x] 🎓 University-email-only ordering
 - [x] ☕ Item options (size, milk, extra shot) and allergen tags
 - [x] ⏰ Pickup time slots and "pause orders" for rush hours
@@ -329,6 +337,9 @@ Use `'manager'` instead of `'staff'` for the café manager.
 - [ ] 🤝 Showing the app to the café manager
 
 ### 📌 Planned
+- [ ] 📲 Test push notifications on real Android and iPhone devices
+- [ ] 🧹 Auto-cancel orders that were never picked up
+- [ ] 📡 Update the menu live when an item sells out
 
 ### 🔮 Future ideas
 - [ ] 💳 Online payment (iyzico / PayTR)

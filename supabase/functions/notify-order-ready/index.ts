@@ -1,3 +1,8 @@
+// @ts-nocheck
+// ↑ This file runs on Supabase's servers with Deno, not Node. VS Code checks it as Node code
+//   and marks Deno.serve, Deno.env and npm: imports red. They are fine on Supabase.
+//   (With the Deno extension installed, .vscode/settings.json makes VS Code check it properly.)
+
 // notify-order-ready
 // Called by the staff screen right after an order is marked "ready".
 // Sends a Web Push notification to every phone the student allowed notifications on,
