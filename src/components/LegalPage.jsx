@@ -4,6 +4,11 @@ import { LEGAL_CONTENT } from '../legal/content'
 import { LEGAL } from '../lib/legal'
 
 const PAGES = ['terms', 'privacy']
+const LANGS = [
+  { code: 'tr', label: 'Türkçe' },
+  { code: 'en', label: 'English' },
+  { code: 'ar', label: 'العربية' },
+]
 
 const readHash = () => {
   const page = window.location.hash.replace('#', '')
@@ -14,6 +19,12 @@ const readHash = () => {
 export default function LegalPage() {
   const { t, i18n } = useTranslation()
   const [page, setPage] = useState(readHash)
+  // The text can be read in any language, whatever language the app is set to
+  const [docLang, setDocLang] = useState(i18n.resolvedLanguage)
+
+  useEffect(() => {
+    if (page) setDocLang(i18n.resolvedLanguage)
+  }, [page, i18n.resolvedLanguage])
 
   function close() {
     history.replaceState(null, '', window.location.pathname + window.location.search)
@@ -39,7 +50,7 @@ export default function LegalPage() {
 
   if (!page) return null
 
-  const content = LEGAL_CONTENT[i18n.resolvedLanguage] ?? LEGAL_CONTENT.tr
+  const content = LEGAL_CONTENT[docLang] ?? LEGAL_CONTENT.tr
   const doc = content[page]
   const contact = LEGAL.contactEmail || t('legal.contactCounter')
   const fill = (text) => text.replaceAll('{controller}', LEGAL.controller).replaceAll('{contact}', contact)
@@ -73,6 +84,23 @@ export default function LegalPage() {
           </button>
         </div>
 
+        <div className="flex flex-wrap gap-2" role="group" aria-label={t('legal.language')}>
+          {LANGS.map((l) => (
+            <button
+              key={l.code}
+              onClick={() => setDocLang(l.code)}
+              aria-pressed={docLang === l.code}
+              lang={l.code}
+              className={`h-9 px-3 rounded-full border-2 text-sm font-bold ${
+                docLang === l.code ? 'bg-pop text-ink border-ink' : 'bg-surface text-fg border-line'
+              }`}
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+
+        <div lang={docLang} dir={docLang === 'ar' ? 'rtl' : 'ltr'} className="flex flex-col gap-5">
         <header>
           <h1 id="legal-title" className="font-display font-extrabold text-3xl">
             {doc.title}
@@ -90,6 +118,7 @@ export default function LegalPage() {
             ))}
           </section>
         ))}
+        </div>
       </div>
     </div>
   )

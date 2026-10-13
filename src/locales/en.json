@@ -327,7 +327,15 @@
     "terms": "Terms of Use",
     "privacy": "Privacy Notice",
     "close": "Close",
-    "contactCounter": "ask at the café counter"
+    "contactCounter": "ask at the café counter",
+    "language": "Language",
+    "accept": "I accept the <terms>Terms of Use</terms> and have read the <privacy>Privacy Notice</privacy>.",
+    "mustAccept": "Please tick the box to accept the Terms of Use first.",
+    "gateTitle": "Before you start",
+    "gateText": "To use IGU Café, please read and accept our Terms of Use and Privacy Notice. You only need to do this once.",
+    "saving": "Saving...",
+    "decline": "Not now, sign me out",
+    "continue": "Accept and continue"
   },
   "bugs": {
     "open": "Report a problem",

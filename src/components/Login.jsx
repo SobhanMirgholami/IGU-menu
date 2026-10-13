@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation, Trans } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { rememberAgreement } from '../lib/legal'
 
 const inputClass =
   'w-full h-14 px-4 rounded-2xl border-2 border-line bg-page text-fg placeholder:text-muted font-semibold focus:outline-none focus:border-brand dark:focus:border-pop'
@@ -12,6 +13,7 @@ export default function Login() {
   const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
+  const [agree, setAgree] = useState(false)
   const [step, setStep] = useState('email')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -29,6 +31,8 @@ export default function Login() {
   async function sendCode(e) {
     e.preventDefault()
     setError(null)
+    if (!agree) return setError(t('legal.mustAccept'))
+    rememberAgreement() // saved to the database right after sign-in
     setLoading(true)
 
     const { error } = await supabase.auth.signInWithOtp({ email: cleanEmail })
@@ -78,7 +82,27 @@ export default function Login() {
               })}
             </p>
           )}
-          <button disabled={loading} className={primaryButton}>
+          <label className="flex items-start gap-3 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={agree}
+              onChange={(e) => {
+                setAgree(e.target.checked)
+                setError(null)
+              }}
+              className="mt-0.5 w-5 h-5 shrink-0 accent-brand"
+            />
+            <span>
+              <Trans
+                i18nKey="legal.accept"
+                components={{
+                  terms: <a href="#terms" className="font-bold underline underline-offset-2" />,
+                  privacy: <a href="#privacy" className="font-bold underline underline-offset-2" />,
+                }}
+              />
+            </span>
+          </label>
+          <button disabled={loading || !agree} className={primaryButton}>
             {loading ? t('login.sending') : t('login.sendCode')}
           </button>
         </form>

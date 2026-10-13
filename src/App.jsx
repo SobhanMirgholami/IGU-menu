@@ -21,6 +21,7 @@ import PinLock from './components/PinLock'
 import BugReports from './components/BugReports'
 import Footer from './components/Footer'
 import LegalPage from './components/LegalPage'
+import TermsGate from './components/TermsGate'
 import { getStaffSession, clearStaffSession, lockTerminal, onTerminalLocked } from './lib/staffSession'
 import { subscribeToPush } from './lib/pwa'
 import { ArrowIcon, LogoutIcon } from './components/icons'
@@ -287,6 +288,7 @@ function App() {
         <PickupBanner />
       </Hero>
 
+      <TermsGate>
       <main className="max-w-md mx-auto px-5 pt-6 flex flex-col gap-6">
         <MyOrders />
         <Menu onAdd={addToCart} />
@@ -295,6 +297,7 @@ function App() {
         </div>
         <Footer signedIn page="student" />
       </main>
+      </TermsGate>
       <LegalPage />
 
       {cartCount > 0 && (
