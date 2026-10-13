@@ -28,3 +28,6 @@ dist-ssr
 # demo video recorder: saved logins and recordings
 tools/demo-video/.auth/
 tools/demo-video/out/
+
+.vercel
+.env*

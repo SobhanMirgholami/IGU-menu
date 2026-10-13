@@ -7,11 +7,10 @@ export function stampBuild() {
   const tag = BUILD_SALT.reduce((acc, v) => (Math.imul(acc, 31) + v) >>> 0, 7).toString(36)
   document.documentElement.dataset.build = tag
 
-  if (new URLSearchParams(window.location.search).has('credits')) {
-    console.log(
-      '%c<Co$mo/>%c\nBuilt by Sobhan Mirgholami (Co$mo)\nhttps://sobhan-cosmo.vercel.app',
-      'color:#f5b942;font:700 22px monospace',
-      'color:#ececf1;font:14px monospace',
-    )
-  }
+  // credits, printed in the browser console on every page load
+  console.log(
+    '%c<Co$mo/>%c\nBuilt by Sobhan Mirgholami (Co$mo)\nhttps://sobhan-cosmo.vercel.app',
+    'color:#f5b942;font:700 22px monospace',
+    'color:#ececf1;font:14px monospace',
+  )
 }
